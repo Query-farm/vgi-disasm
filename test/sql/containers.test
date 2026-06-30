@@ -1,0 +1,57 @@
+# name: test/sql/containers.test
+# group: [vgi_disasm]
+#
+# sections() and imports() over the committed real arm64 Mach-O fixture (passed
+# by path — a constant table-function argument), plus the raw/empty paths.
+
+require-env VGI_DISASM_WORKER
+
+statement ok
+LOAD vgi;
+
+statement ok
+ATTACH 'vgi-disasm' AS disasm (TYPE vgi, LOCATION '${VGI_DISASM_WORKER}');
+
+statement ok
+SET search_path = 'disasm.main';
+
+# The fixture has at least one executable code section.
+query I
+SELECT CASE WHEN count(*) >= 1 THEN 1 ELSE 0 END
+FROM sections('test/sql/data/hello-macho-arm64')
+WHERE exec AND kind = 'code';
+----
+1
+
+# Its __TEXT,__text section is present and executable.
+query TI
+SELECT name, exec::INT
+FROM sections('test/sql/data/hello-macho-arm64')
+WHERE name = '__TEXT,__text';
+----
+__TEXT,__text	1
+
+# The fixture imports _puts from libSystem.
+query I
+SELECT count(*)
+FROM imports('test/sql/data/hello-macho-arm64')
+WHERE name = '_puts';
+----
+1
+
+# A disassemble(section:='auto') sweep over the fixture decodes real
+# instructions, including at least one call.
+query I
+SELECT CASE WHEN count(*) >= 1 THEN 1 ELSE 0 END
+FROM disassemble('test/sql/data/hello-macho-arm64')
+WHERE list_contains(groups, 'call');
+----
+1
+
+# A raw (non-container) blob has no sections and no imports.
+query II
+SELECT
+  (SELECT count(*) FROM sections('not a binary'::BLOB)),
+  (SELECT count(*) FROM imports('not a binary'::BLOB));
+----
+0	0

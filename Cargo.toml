@@ -1,0 +1,40 @@
+[workspace]
+resolver = "2"
+members = ["crates/disasm-core", "crates/disasm-worker"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.90"
+license = "MIT"
+authors = ["Query Farm LLC <hello@query.farm>"]
+repository = "https://github.com/Query-farm/vgi-disasm"
+
+[workspace.dependencies]
+# VGI Rust SDK (worker side), published on crates.io. Pulls in vgi-rpc 0.7 and
+# arrow 59 transitively; keep arrow/vgi-rpc here in lockstep with vgi's pins so a
+# single arrow/vgi-rpc resolves.
+vgi = "0.9.5"
+vgi-rpc = { version = "0.7.0", default-features = false, features = ["macros", "http"] }
+arrow-array = "59"
+arrow-buffer = "59"
+arrow-schema = "59"
+
+# Disassembly + container parsing (all permissive; see README "Licensing"):
+#   capstone  -> MIT bindings over the BSD-3-Clause Capstone C engine (bundled).
+#   goblin    -> MIT PE/ELF/Mach-O parser (fuzz-hardened).
+#   object    -> MIT/Apache-2.0 cross-format object access (secondary reader).
+capstone = "0.14"
+goblin = "0.10"
+object = "0.39"
+
+# The pure logic crate (container parse, sweep, triage), shared by the worker
+# and exercised directly by golden-vector + proptest suites.
+disasm-core = { path = "crates/disasm-core" }
+
+[profile.release]
+opt-level = 2
+# Strip symbols + debug info from the release binary. The worker has no need for
+# in-binary backtraces in production; build a debug profile locally if you need
+# symbols.
+strip = true

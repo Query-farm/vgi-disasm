@@ -1,0 +1,20 @@
+[package]
+name = "disasm-core"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Pure disassembly + container-triage engine behind the vgi-disasm VGI worker (Capstone sweep, goblin container parse, ATT&CK heuristics)"
+
+[dependencies]
+capstone.workspace = true
+goblin.workspace = true
+object.workspace = true
+
+[dev-dependencies]
+proptest = "1"
+# `write` is needed only by the container test-fixture generator (tests/common),
+# which synthesizes a real ELF object to exercise the parse + sweep path.
+object = { workspace = true, features = ["write"] }

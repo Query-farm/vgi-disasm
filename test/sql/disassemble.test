@@ -1,0 +1,87 @@
+# name: test/sql/disassemble.test
+# group: [vgi_disasm]
+#
+# Core disassemble() table function over from_hex() shellcode literals. DuckDB
+# table functions take CONSTANT arguments (no correlated/LATERAL column args),
+# so the input is a literal BLOB built with from_hex().
+
+require-env VGI_DISASM_WORKER
+
+statement ok
+LOAD vgi;
+
+statement ok
+ATTACH 'vgi-disasm' AS disasm (TYPE vgi, LOCATION '${VGI_DISASM_WORKER}');
+
+statement ok
+SET search_path = 'disasm.main';
+
+# push rbp; mov rbp,rsp; ret  ->  3 instructions.
+query I
+SELECT count(*) FROM disassemble(from_hex('554889e5c3'), arch := 'x86', mode := 'x64');
+----
+3
+
+# Address-ordered mnemonics at an explicit base of 4096.
+query IT
+SELECT address, mnemonic
+FROM disassemble(from_hex('554889e5c3'), arch := 'x86', mode := 'x64', base := 4096)
+ORDER BY address;
+----
+4096	push
+4097	mov
+4100	ret
+
+# The operand text of the prologue's second instruction.
+query T
+SELECT op_str
+FROM disassemble(from_hex('554889e5c3'), arch := 'x86', mode := 'x64')
+ORDER BY address LIMIT 1 OFFSET 1;
+----
+rbp, rsp
+
+# call rel32 is tagged with the 'call' and 'branch_relative' groups.
+query I
+SELECT count(*)
+FROM disassemble(from_hex('e800000000'), arch := 'x86', mode := 'x64')
+WHERE list_contains(groups, 'call') AND list_contains(groups, 'branch_relative');
+----
+1
+
+# No decoder-state noise (modeNN) leaks into the normalized groups vocabulary.
+query I
+SELECT count(*)
+FROM disassemble(from_hex('554889e5c3'), arch := 'x86', mode := 'x64')
+WHERE len(list_filter(groups, g -> starts_with(g, 'mode'))) > 0;
+----
+0
+
+# An undecodable byte (0x06 is invalid in x64) becomes a one-byte '.byte' row;
+# the sweep resumes and never stalls.
+query TT
+SELECT mnemonic, op_str
+FROM disassemble(from_hex('0690'), arch := 'x86', mode := 'x64')
+ORDER BY address;
+----
+.byte	0x06
+nop	(empty)
+
+# A raw blob with no arch yields a single diagnostic row, never an error.
+query TT
+SELECT mnemonic, op_str FROM disassemble(from_hex('9090'));
+----
+(error)	arch required for raw blob
+
+# arm64: mov x0,#0 ; ret.
+query T
+SELECT mnemonic FROM disassemble(from_hex('000080d2c0035fd6'), arch := 'arm64')
+ORDER BY address;
+----
+mov
+ret
+
+# disasm_version() returns a non-empty string.
+query I
+SELECT CASE WHEN length(disasm_version()) > 0 THEN 1 ELSE 0 END;
+----
+1

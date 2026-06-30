@@ -1,0 +1,56 @@
+# name: test/sql/triage.test
+# group: [vgi_disasm]
+#
+# strings() extraction and the heuristic capabilities() ATT&CK matcher over
+# inline BLOB literals. capabilities() is a deliberate heuristic over curated
+# reference tables — it is NOT a port of capa.
+
+require-env VGI_DISASM_WORKER
+
+statement ok
+LOAD vgi;
+
+statement ok
+ATTACH 'vgi-disasm' AS disasm (TYPE vgi, LOCATION '${VGI_DISASM_WORKER}');
+
+statement ok
+SET search_path = 'disasm.main';
+
+# A single printable ASCII run is extracted.
+query T
+SELECT value
+FROM strings('hello world embedded'::BLOB)
+WHERE encoding = 'ascii'
+ORDER BY "offset" LIMIT 1;
+----
+hello world embedded
+
+# min_len filters out short runs ('ab' is below the default of 4).
+query I
+SELECT count(*) FROM strings('ab cd ef ghij'::BLOB, min_len := 10);
+----
+1
+
+# A PowerShell -EncodedCommand string trips the T1059.001 heuristic.
+query I
+SELECT CASE WHEN count(*) >= 1 THEN 1 ELSE 0 END
+FROM capabilities('powershell.exe -EncodedCommand ZQBjAGgAbwA='::BLOB)
+WHERE attack_id = 'T1059.001';
+----
+1
+
+# A VM-artifact string trips the sandbox-evasion family (T1497.*).
+query I
+SELECT CASE WHEN count(*) >= 1 THEN 1 ELSE 0 END
+FROM capabilities('this checks for vmware tools'::BLOB)
+WHERE attack_id LIKE 'T1497%';
+----
+1
+
+# A benign text blob produces no high-severity capability rows.
+query I
+SELECT count(*)
+FROM capabilities('the quick brown fox jumps over the lazy dog'::BLOB)
+WHERE severity = 'high';
+----
+0

@@ -1,0 +1,49 @@
+# name: test/sql/probe.test
+# group: [vgi_disasm]
+#
+# The format() and entrypoint() probe scalars. They accept either an inline BLOB
+# or a VARCHAR path (the bytes are read but never executed). A committed real
+# arm64 Mach-O fixture exercises the container path.
+
+require-env VGI_DISASM_WORKER
+
+statement ok
+LOAD vgi;
+
+statement ok
+ATTACH 'vgi-disasm' AS disasm (TYPE vgi, LOCATION '${VGI_DISASM_WORKER}');
+
+statement ok
+SET search_path = 'disasm.main';
+
+# A non-container blob probes as 'raw' with NULL detail fields.
+query T
+SELECT (format('not a binary'::BLOB)).container;
+----
+raw
+
+query I
+SELECT CASE WHEN (format('not a binary'::BLOB)).arch IS NULL THEN 1 ELSE 0 END;
+----
+1
+
+# The Mach-O fixture (by path) probes as macho / arm64 / 64-bit.
+query TTI
+SELECT (format('test/sql/data/hello-macho-arm64')).container,
+       (format('test/sql/data/hello-macho-arm64')).arch,
+       (format('test/sql/data/hello-macho-arm64')).bits;
+----
+macho	arm64	64
+
+# entrypoint() resolves the arch and the containing section.
+query TT
+SELECT (entrypoint('test/sql/data/hello-macho-arm64')).arch,
+       (entrypoint('test/sql/data/hello-macho-arm64')).section;
+----
+arm64	__TEXT,__text
+
+# A raw blob yields an entrypoint struct with NULL fields (not an error).
+query I
+SELECT CASE WHEN (entrypoint('xyz'::BLOB)).vaddr IS NULL THEN 1 ELSE 0 END;
+----
+1
