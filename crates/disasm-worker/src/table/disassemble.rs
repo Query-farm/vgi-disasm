@@ -18,7 +18,7 @@ use disasm_core::Insn;
 
 const EXECUTABLE_EXAMPLES: &str = r#"[
   {
-    "description": "Disassemble x64 shellcode at an explicit base; list its call sites.",
+    "description": "Disassemble x64 shellcode at an explicit base (0x1000); list its return sites.",
     "sql": "SELECT address, mnemonic, op_str FROM disasm.main.disassemble(from_hex('554889e5c3'), arch := 'x86', mode := 'x64', base := 4096) WHERE list_contains(groups, 'ret')"
   },
   {
@@ -62,9 +62,14 @@ impl TableFunction for Disassemble {
              LIST<VARCHAR> (call/jump/ret/int/privileged/branch_relative/fpu/sse/vm). Output is \
              address-ordered and bounded; undecodable bytes become '.byte' rows so the sweep \
              never stalls. The input is statically decoded, never executed.",
-            "Disassemble a binary or shellcode into instruction rows \
-             (address, size, bytes, mnemonic, op_str, groups). Linear sweep, arch auto-detected \
-             or passed explicitly.",
+            "Disassemble a binary or shellcode into instruction rows (`address`, `size`, `bytes`, \
+             `mnemonic`, `op_str`, `groups`) via [Capstone](https://www.capstone-engine.org/). \
+             Arch/mode auto-detect from a PE/ELF/Mach-O container, or pass `arch` / `mode` \
+             explicitly (required for raw shellcode). v1 uses a **linear sweep** from the start of \
+             each selected section — simple and deterministic, but it can mis-decode data \
+             interleaved in code; undecodable bytes become `.byte` rows and the sweep resumes, so \
+             it never stalls. Supported arches: x86 (16/32/64), arm, arm64, mips, ppc, sysz, \
+             riscv.",
             &[
                 "disassemble",
                 "disassembly",

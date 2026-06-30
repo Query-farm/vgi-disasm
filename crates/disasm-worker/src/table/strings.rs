@@ -54,8 +54,10 @@ impl TableFunction for Strings {
              min_len (default 4), each with its file offset and encoding (ascii or utf16le). \
              Feeds the string→indicator capability heuristics and is independently useful for \
              triage. Output count is bounded. Input may be inline BLOB bytes or a VARCHAR path.",
-            "Extract printable ASCII and UTF-16LE strings (offset, encoding, value) of length ≥ \
-             min_len.",
+            "Classic `strings`-style extraction of printable ASCII and UTF-16LE runs of length ≥ \
+             `min_len` (default 4), each with its file `offset` and `encoding`. Feeds the \
+             string→indicator capability heuristics and is independently useful for triage; the \
+             output count and per-string length are bounded.",
             &[
                 "strings",
                 "ascii",

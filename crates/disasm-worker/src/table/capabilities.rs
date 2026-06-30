@@ -70,8 +70,11 @@ impl TableFunction for Capabilities {
              per match with rule, attack_id, attack_name, severity (advisory only), and the \
              matched evidence. This is a deliberate heuristic over curated reference tables — it \
              is NOT a port of capa's rule engine. Input may be inline BLOB bytes or a VARCHAR path.",
-            "Heuristic capability indicators mapped to MITRE ATT&CK (rule, attack_id, attack_name, \
-             severity, evidence). Not capa.",
+            "Lightweight, [MITRE ATT&CK](https://attack.mitre.org/techniques/)-tagged capability \
+             indicators for malware triage (`rule`, `attack_id`, `attack_name`, `severity`, \
+             `evidence`), matched from three cheap signals — suspicious import names, interesting \
+             strings, and anti-analysis instruction patterns. A deliberate heuristic over curated \
+             reference tables; **not** a port of capa's rule engine.",
             &[
                 "capabilities", "mitre", "att&ck", "attack", "heuristic", "malware", "triage",
                 "process injection", "ransomware", "anti-debug", "anti-vm",

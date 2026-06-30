@@ -45,8 +45,10 @@ impl TableFunction for Imports {
              (named, ordinal, delayed). This is the input to the import-name capability \
              heuristics and a join key to vgi-pe. A raw blob yields zero rows. Input may be \
              inline BLOB bytes or a VARCHAR path.",
-            "Enumerate a binary's imported symbols (library, name, ordinal, kind) across PE, ELF, \
-             and Mach-O.",
+            "Enumerate a binary's imported symbols (`library`, `name`, `ordinal`, `kind`) across \
+             PE (import directory, including ordinal-only entries where `name` is NULL), ELF \
+             (dynamic-symbol imports), and Mach-O (bind/lazy). The input to the import-name \
+             capability heuristics and a join key to `vgi-pe`. A raw blob yields zero rows.",
             &[
                 "imports",
                 "iat",

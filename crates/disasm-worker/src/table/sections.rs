@@ -47,8 +47,12 @@ impl TableFunction for Sections {
              an exec flag (the executable sections disassemble(section:='auto') sweeps), and \
              Shannon entropy over the section bytes (a packed/encrypted-section flag). A raw blob \
              yields zero rows. Input may be inline BLOB bytes or a VARCHAR path.",
-            "Enumerate a binary's sections with name, kind, vaddr, size, file offset, exec flag, \
-             and Shannon entropy.",
+            "Enumerate the sections/segments of a [PE](https://learn.microsoft.com/windows/win32/debug/pe-format) \
+             / [ELF](https://refspecs.linuxfoundation.org/elf/elf.pdf) / Mach-O binary (`name`, \
+             `kind`, `vaddr`, `size`, `file_off`, `exec`, `entropy`). `exec` marks the executable \
+             sections that `disassemble(section := 'auto')` sweeps; high `entropy` (near 8 \
+             bits/byte) flags a packed or encrypted section. A raw (non-container) blob yields zero \
+             rows.",
             &[
                 "sections",
                 "segments",
