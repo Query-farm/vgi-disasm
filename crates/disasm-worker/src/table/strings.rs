@@ -68,6 +68,7 @@ impl TableFunction for Strings {
                 "printable",
                 "offset",
             ],
+            "Static Extraction",
         );
         tags.push((
             "vgi.result_columns_md".into(),

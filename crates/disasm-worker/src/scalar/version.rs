@@ -39,6 +39,7 @@ impl ScalarFunction for DisasmVersion {
                     "worker version",
                     "semver",
                 ],
+                "Utility",
             ),
             ..Default::default()
         }

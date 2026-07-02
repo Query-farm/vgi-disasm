@@ -62,6 +62,7 @@ impl TableFunction for Imports {
                 "elf",
                 "macho",
             ],
+            "Static Extraction",
         );
         tags.push((
             "vgi.result_columns_md".into(),

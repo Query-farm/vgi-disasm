@@ -36,6 +36,31 @@ pub fn version() -> &'static str {
     env!("CARGO_PKG_VERSION")
 }
 
+/// The schema's ordered category registry (VGI413), emitted as `vgi.categories`.
+/// Every function's `vgi.category` tag must name one of these `name` values.
+pub const CATEGORIES: &[(&str, &str)] = &[
+    (
+        "Disassembly",
+        "Decode a binary or shellcode blob into one row per machine instruction.",
+    ),
+    (
+        "Container Probe",
+        "Cheap header probes that identify the container format and resolve the entry point.",
+    ),
+    (
+        "Static Extraction",
+        "Enumerate the static contents of a binary: sections, imported symbols, and strings.",
+    ),
+    (
+        "Malware Triage",
+        "Heuristic MITRE ATT&CK capability tagging over imports, strings, and instructions.",
+    ),
+    (
+        "Utility",
+        "Worker metadata helpers, such as the running version probe.",
+    ),
+];
+
 /// Catalog + schema metadata (description, provenance) surfaced to DuckDB and
 /// the `vgi-lint` metadata-quality linter.
 fn catalog_metadata(name: &str) -> CatalogModel {
@@ -83,11 +108,12 @@ fn catalog_metadata(name: &str) -> CatalogModel {
                  and `vgi-ioc` (indicators) in a VGI security bundle. The worker is **pure static \
                  compute over the input BLOB — it never executes the sample**, making it safe for \
                  air-gapped / regulated malware repositories.\n\n\
-                 **Function surface.** `disassemble(blob[, arch, mode, base, section])` fans a \
-                 binary into instruction rows; `sections`, `imports`, `strings`, and \
-                 `capabilities` are LATERAL-friendly table functions; `format` and `entrypoint` \
-                 are cheap header probes. See the [source \
-                 repository](https://github.com/Query-farm/vgi-disasm) for the full catalog."
+                 **How it works.** You supply a sample as inline bytes or a filesystem path; the \
+                 worker sniffs the container, resolves architecture and mode, statically decodes \
+                 the executable sections, and tags heuristic behaviours against MITRE ATT&CK — all \
+                 as ordinary SQL relations you can filter, aggregate, and join. Nothing is ever \
+                 run or emulated. List the schema to discover the available functions, or see the \
+                 [source repository](https://github.com/Query-farm/vgi-disasm)."
                     .to_string(),
             ),
             (
@@ -175,11 +201,17 @@ fn catalog_metadata(name: &str) -> CatalogModel {
                 ),
                 (
                     "vgi.doc_md".to_string(),
-                    "The single schema for the `disasm` worker. It holds the disassembly table \
-                     function `disassemble`, the container relations `sections`, `imports`, and \
-                     `strings`, the heuristic `capabilities` matcher, and the `format` / \
-                     `entrypoint` probe scalars, plus `disasm_version`."
+                    "The single schema for the `disasm` worker. Everything here turns an opaque \
+                     executable — a PE/ELF/Mach-O file or a raw shellcode blob, supplied inline or \
+                     as a path — into queryable SQL relations: machine instructions, container \
+                     layout, imported symbols, printable strings, and heuristic MITRE ATT&CK \
+                     capability tags. All decoding is static; the sample is never executed. List \
+                     the schema to browse the available functions."
                         .to_string(),
+                ),
+                (
+                    "vgi.categories".to_string(),
+                    crate::meta::categories_json(CATEGORIES),
                 ),
                 (
                     "vgi.example_queries".to_string(),

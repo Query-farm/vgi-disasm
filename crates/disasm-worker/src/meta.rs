@@ -50,13 +50,35 @@ pub fn agent_test_tasks_json(tasks: &[(&str, &str, &str)]) -> String {
     format!("[{}]", items.join(","))
 }
 
-/// Build the four standard per-object discovery/description tags. `keywords` is
-/// a slice of terms (joined and JSON-encoded for `vgi.keywords`).
+/// Encode an ordered list of `(name, description)` categories as the JSON array
+/// of `{"name","description"}` objects that a schema's `vgi.categories` registry
+/// requires (VGI413). Each object then names one of these via `vgi.category`.
+pub fn categories_json(categories: &[(&str, &str)]) -> String {
+    fn esc(s: &str) -> String {
+        s.replace('\\', "\\\\").replace('"', "\\\"")
+    }
+    let items: Vec<String> = categories
+        .iter()
+        .map(|(name, description)| {
+            format!(
+                "{{\"name\":\"{}\",\"description\":\"{}\"}}",
+                esc(name),
+                esc(description)
+            )
+        })
+        .collect();
+    format!("[{}]", items.join(","))
+}
+
+/// Build the standard per-object discovery/description tags. `keywords` is a
+/// slice of terms (joined and JSON-encoded for `vgi.keywords`); `category` names
+/// one of the schema's `vgi.categories` (VGI413).
 pub fn object_tags(
     title: &str,
     description_llm: &str,
     description_md: &str,
     keywords: &[&str],
+    category: &str,
 ) -> Vec<(String, String)> {
     vec![
         ("vgi.title".to_string(), title.to_string()),
@@ -66,5 +88,6 @@ pub fn object_tags(
             "vgi.keywords".to_string(),
             keywords_json(&keywords.join(",")),
         ),
+        ("vgi.category".to_string(), category.to_string()),
     ]
 }

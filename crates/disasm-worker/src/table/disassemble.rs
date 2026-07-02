@@ -84,6 +84,7 @@ impl TableFunction for Disassemble {
                 "arm",
                 "linear sweep",
             ],
+            "Disassembly",
         );
         tags.push((
             "vgi.result_columns_md".into(),

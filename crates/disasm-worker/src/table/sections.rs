@@ -65,6 +65,7 @@ impl TableFunction for Sections {
                 "vaddr",
                 "code section",
             ],
+            "Static Extraction",
         );
         tags.push((
             "vgi.result_columns_md".into(),

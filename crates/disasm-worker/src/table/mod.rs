@@ -55,8 +55,8 @@ pub(crate) fn input_arg() -> ArgSpec {
         "blob",
         0,
         "any",
-        "The binary or shellcode to analyze: either the raw bytes supplied inline (BLOB), or a \
-         filesystem path to the file to open and read (VARCHAR). The bytes are statically decoded \
+        "The binary or shellcode to analyze: either the raw bytes supplied inline, or a \
+         filesystem path to the file to open and read. The bytes are statically decoded \
          only — never executed.",
     )
 }

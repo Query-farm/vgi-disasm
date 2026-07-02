@@ -61,6 +61,7 @@ impl ScalarFunction for Format {
                     "endianness",
                     "is binary",
                 ],
+                "Container Probe",
             ),
             ..Default::default()
         }
@@ -70,8 +71,9 @@ impl ScalarFunction for Format {
         vec![ArgSpec::any_column(
             "blob",
             0,
-            "The binary or shellcode to probe: inline BLOB bytes or a VARCHAR path to a file. \
-             Only the container header is read; the bytes are never executed.",
+            "The binary or shellcode to probe: the raw bytes supplied inline, or a filesystem \
+             path to the file to read. Only the container header is read; the bytes are never \
+             executed.",
         )]
     }
 
@@ -174,6 +176,7 @@ impl ScalarFunction for Entrypoint {
                     "mode",
                     "section",
                 ],
+                "Container Probe",
             ),
             ..Default::default()
         }
@@ -183,8 +186,9 @@ impl ScalarFunction for Entrypoint {
         vec![ArgSpec::any_column(
             "blob",
             0,
-            "The binary to resolve the entry point of: inline BLOB bytes or a VARCHAR path. \
-             Only headers are read; the bytes are never executed.",
+            "The binary to resolve the entry point of: the raw bytes supplied inline, or a \
+             filesystem path to the file to read. Only headers are read; the bytes are never \
+             executed.",
         )]
     }
 

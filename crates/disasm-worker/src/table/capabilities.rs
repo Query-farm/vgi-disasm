@@ -79,6 +79,7 @@ impl TableFunction for Capabilities {
                 "capabilities", "mitre", "att&ck", "attack", "heuristic", "malware", "triage",
                 "process injection", "ransomware", "anti-debug", "anti-vm",
             ],
+            "Malware Triage",
         );
         tags.push((
             "vgi.result_columns_md".into(),
