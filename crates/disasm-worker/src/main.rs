@@ -201,12 +201,22 @@ fn catalog_metadata(name: &str) -> CatalogModel {
                 ),
                 (
                     "vgi.doc_md".to_string(),
-                    "The single schema for the `disasm` worker. Everything here turns an opaque \
-                     executable — a PE/ELF/Mach-O file or a raw shellcode blob, supplied inline or \
-                     as a path — into queryable SQL relations: machine instructions, container \
+                    "## The `disasm` worker\n\n\
+                     A static binary-analysis toolkit exposed as SQL. It turns an opaque \
+                     executable — a PE, ELF, or Mach-O file, or a raw shellcode blob, supplied \
+                     inline as a `BLOB` or as a filesystem path — into queryable relations.\n\n\
+                     ### Key concepts\n\n\
+                     - **Static only.** Every decode is a pure parse; the sample is *never* \
+                     executed or emulated.\n\
+                     - **Bounded & panic-free.** Malformed or hostile input yields empty or \
+                     diagnostic output, never a crash.\n\
+                     - **Triage-oriented.** Beyond raw machine instructions you get container \
                      layout, imported symbols, printable strings, and heuristic MITRE ATT&CK \
-                     capability tags. All decoding is static; the sample is never executed. List \
-                     the schema to browse the available functions."
+                     capability tags.\n\n\
+                     ### When to use it\n\n\
+                     Reach for this schema to disassemble shellcode or binaries, inspect a \
+                     container's structure and entry point, or run first-pass malware triage \
+                     entirely inside DuckDB."
                         .to_string(),
                 ),
                 (

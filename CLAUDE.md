@@ -41,7 +41,7 @@ test/sql/               # the .test files (LOAD vgi; ATTACH; assert) + test/sql/
 - **Pure core / thin worker.** All decode/parse/triage logic lives in
   `disasm-core` and is tested there directly. The worker crate only marshals
   Arrow. Don't put logic in the worker.
-- **Published SDK only.** `vgi = "0.9.5"`, arrow 59, vgi-rpc 0.7 — **no path
+- **Published SDK only.** `vgi = "0.11.0"`, arrow 59, vgi-rpc 0.8 — **no path
   deps**. Keep arrow/vgi-rpc pins in lockstep with vgi.
 - **License is MIT** (fleet convention). All deps are permissive (Capstone C
   engine BSD-3-Clause; bindings/goblin MIT; object MIT/Apache-2.0).
