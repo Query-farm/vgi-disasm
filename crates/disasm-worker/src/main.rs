@@ -28,7 +28,7 @@ mod meta;
 mod scalar;
 mod table;
 
-use vgi::catalog::{CatSchema, CatalogModel};
+use vgi::catalog::{CatSchema, CatView, CatalogModel};
 use vgi::Worker;
 
 /// Worker version string, surfaced by `disasm_version()`.
@@ -157,6 +157,41 @@ fn catalog_metadata(name: &str) -> CatalogModel {
                          row with one column named version.",
                         "SELECT disasm.main.disasm_version() AS version",
                     ),
+                    (
+                        "entrypoint_raw_arch_null",
+                        "The blob whose bytes are the text 'not a binary' is not a real \
+                         executable. Resolve its entry point and tell me whether the resolved \
+                         architecture is NULL. Return a single boolean column named arch_is_null.",
+                        "SELECT (disasm.main.entrypoint('not a binary'::BLOB)).arch IS NULL AS \
+                         arch_is_null",
+                    ),
+                    (
+                        "sections_of_non_container",
+                        "How many sections does the blob whose bytes are the text 'not a binary' \
+                         contain? It is not a real container. Return a single column named n.",
+                        "SELECT count(*) AS n FROM disasm.main.sections('not a binary'::BLOB)",
+                    ),
+                    (
+                        "imports_present",
+                        "Does the blob whose bytes are the text 'not a binary' import any \
+                         symbols? Return a single boolean column named has_imports.",
+                        "SELECT count(*) > 0 AS has_imports FROM \
+                         disasm.main.imports('not a binary'::BLOB)",
+                    ),
+                    (
+                        "strings_extract_url",
+                        "Extract the printable ASCII strings from the blob whose bytes are the \
+                         text 'http://evil.example/c2'. Return them ordered alphabetically in a \
+                         single column named value.",
+                        "SELECT value FROM disasm.main.strings('http://evil.example/c2'::BLOB) \
+                         WHERE encoding = 'ascii' ORDER BY value",
+                    ),
+                    (
+                        "supported_arch_list",
+                        "Which architectures can this worker disassemble? List them alphabetically \
+                         in a single column named arch.",
+                        "SELECT arch FROM disasm.main.supported_targets ORDER BY arch",
+                    ),
                 ]),
             ),
             ("vgi.author".to_string(), "Query.Farm".to_string()),
@@ -231,11 +266,98 @@ fn catalog_metadata(name: &str) -> CatalogModel {
                         .to_string(),
                 ),
             ],
-            views: Vec::new(),
+            views: vec![supported_targets_view()],
             macros: Vec::new(),
             tables: Vec::new(),
         }],
         ..Default::default()
+    }
+}
+
+/// A zero-setup, browsable reference relation (VGI146): the architecture / decode-mode
+/// vocabulary the `disassemble()` function accepts. A worker whose surface is otherwise
+/// all table functions gives an agent nothing to `SELECT * FROM` before it has a sample
+/// in hand; this view lets it discover the valid `arch` / `mode` tokens directly. The
+/// `arch` rows are sourced from [`disasm_core::SUPPORTED_ARCHES`] so the view, the
+/// `disassemble` argument `choices`, and the decoder cannot drift apart. It takes no
+/// arguments, needs no input, and scans without any credential or network access.
+fn supported_targets_view() -> CatView {
+    // Assert the row set stays in lockstep with the decoder's accepted arches.
+    debug_assert_eq!(
+        disasm_core::SUPPORTED_ARCHES,
+        ["x86", "arm", "arm64", "mips", "ppc", "sysz", "riscv"],
+    );
+    let mut tags = crate::meta::object_tags(
+        "Supported Disassembly Targets",
+        "The fixed vocabulary of architecture and decode-mode tokens the disassemble() function \
+         accepts, one row per architecture. Each row lists the arch token to pass, the valid mode \
+         tokens for it, and a short note on when to set mode. Browse it (a plain no-argument scan) \
+         to learn what to put in disassemble()'s arch / mode arguments before you have a sample in \
+         hand. It takes no arguments and always returns the same seven rows.",
+        "A no-arguments reference of the architecture / decode-mode tokens `disassemble()` accepts \
+         (`arch`, `modes`, `description`) — one row per architecture. Browse \
+         `disasm.main.supported_targets` to discover valid `arch` / `mode` values (e.g. `x86` with \
+         mode `x64`, or `arm` with mode `thumb`) without needing a binary first.",
+        &[
+            "supported",
+            "architectures",
+            "arch",
+            "mode",
+            "targets",
+            "reference",
+            "capstone",
+            "x86",
+            "arm",
+            "browsable",
+        ],
+        "Utility",
+    );
+    tags.push(("domain".to_string(), "security".to_string()));
+    tags.push(("topic".to_string(), "disassembly".to_string()));
+    tags.push((
+        "vgi.example_queries".to_string(),
+        crate::meta::example_queries_json(&[(
+            "List every architecture the disassemble() function accepts and the mode tokens valid \
+             for each.",
+            "SELECT arch, modes FROM disasm.main.supported_targets ORDER BY arch;",
+        )]),
+    ));
+    CatView {
+        name: "supported_targets".to_string(),
+        definition: "SELECT * FROM (VALUES \
+             ('x86', 'x16, x32, x64', 'Intel x86; pass mode to choose the register width (default x64).'), \
+             ('arm', 'arm, thumb', 'Little-endian 32-bit ARM; pass mode := ''thumb'' for the Thumb (T32) instruction set.'), \
+             ('arm64', 'little, big', '64-bit ARM (AArch64); little-endian unless mode := ''big''.'), \
+             ('mips', 'little, big', 'MIPS; pass mode := ''big'' for big-endian targets.'), \
+             ('ppc', 'little, big', 'PowerPC; pass mode := ''big'' for big-endian targets.'), \
+             ('sysz', 'big', 'IBM System/390 (s390x); always decoded big-endian.'), \
+             ('riscv', 'little, big', '64-bit RISC-V.')) \
+             AS t(arch, modes, description)"
+            .to_string(),
+        comment: Some(
+            "The architecture / decode-mode tokens disassemble() accepts — browse it to discover \
+             valid arch / mode values without supplying a binary."
+                .to_string(),
+        ),
+        tags,
+        column_comments: vec![
+            (
+                "arch".to_string(),
+                "Architecture token to pass as disassemble()'s arch argument (x86, arm, arm64, \
+                 mips, ppc, sysz, riscv)."
+                    .to_string(),
+            ),
+            (
+                "modes".to_string(),
+                "Comma-separated mode tokens valid for this architecture, passed as \
+                 disassemble()'s mode argument."
+                    .to_string(),
+            ),
+            (
+                "description".to_string(),
+                "When and how to set mode for this architecture.".to_string(),
+            ),
+        ],
     }
 }
 

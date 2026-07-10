@@ -38,7 +38,7 @@ pub use capabilities::{capabilities, Capability};
 pub use engine::Insn;
 pub use entrypoint::{entrypoint, EntryPoint};
 pub use imports::{imports, Import};
-pub use probe::{probe, ArchSel, Probe};
+pub use probe::{probe, ArchSel, Probe, SUPPORTED_ARCHES, SUPPORTED_MODES};
 pub use sections::{sections, Section};
 pub use strings::{strings, StringHit};
 pub use sweep::disassemble;

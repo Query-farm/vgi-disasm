@@ -87,16 +87,15 @@ impl TableFunction for Disassemble {
             "Disassembly",
         );
         tags.push((
-            "vgi.result_columns_md".into(),
-            "| column | type | description |\n\
-             |---|---|---|\n\
-             | `address` | UBIGINT | Absolute VA (base + offset). |\n\
-             | `size` | UTINYINT | Instruction length in bytes. |\n\
-             | `bytes` | BLOB | Raw machine bytes of the instruction. |\n\
-             | `mnemonic` | VARCHAR | Mnemonic, e.g. `mov`, `call`, `bl`. |\n\
-             | `op_str` | VARCHAR | Operand text. |\n\
-             | `groups` | VARCHAR[] | Normalized instruction groups for SQL filtering. |"
-                .into(),
+            "vgi.result_columns_schema".into(),
+            crate::meta::result_columns_schema_json(&[
+                ("address", "UBIGINT", "Absolute virtual address of the instruction (base + offset)."),
+                ("size", "UTINYINT", "Instruction length in bytes (0 only for the synthetic error row)."),
+                ("bytes", "BLOB", "The raw machine bytes of this instruction."),
+                ("mnemonic", "VARCHAR", "Instruction mnemonic, e.g. 'mov', 'call', 'bl'; '.byte' for an undecodable byte."),
+                ("op_str", "VARCHAR", "Operand text, e.g. 'rax, qword ptr [rip + 0x2f1a]'."),
+                ("groups", "VARCHAR[]", "Normalized instruction groups (call, jump, ret, int, privileged, branch_relative, fpu, sse, vm) for SQL filtering."),
+            ]),
         ));
         tags.push(("vgi.executable_examples".into(), EXECUTABLE_EXAMPLES.into()));
         FunctionMetadata {
@@ -124,14 +123,16 @@ impl TableFunction for Disassemble {
                 "varchar",
                 "Override container detection or supply the arch for raw bytes: x86, arm, arm64, \
                  mips, ppc, sysz, or riscv. Required for a raw blob (no container to read).",
-            ),
+            )
+            .with_choices(disasm_core::SUPPORTED_ARCHES.iter().copied()),
             ArgSpec::const_arg(
                 "mode",
                 -1,
                 "varchar",
                 "Decode mode: x16, x32, x64 (x86 width), arm or thumb (32-bit ARM), or big/little \
                  (endianness for the other arches).",
-            ),
+            )
+            .with_choices(disasm_core::SUPPORTED_MODES.iter().copied()),
             ArgSpec::const_arg(
                 "base",
                 -1,

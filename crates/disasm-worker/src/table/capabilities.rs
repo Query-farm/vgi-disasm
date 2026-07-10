@@ -82,15 +82,30 @@ impl TableFunction for Capabilities {
             "Malware Triage",
         );
         tags.push((
-            "vgi.result_columns_md".into(),
-            "| column | type | description |\n\
-             |---|---|---|\n\
-             | `rule` | VARCHAR | Short heuristic name. |\n\
-             | `attack_id` | VARCHAR | ATT&CK technique id. |\n\
-             | `attack_name` | VARCHAR | ATT&CK technique name. |\n\
-             | `severity` | VARCHAR | info/low/medium/high. |\n\
-             | `evidence` | VARCHAR | The matched import/string/instruction. |"
-                .into(),
+            "vgi.result_columns_schema".into(),
+            crate::meta::result_columns_schema_json(&[
+                (
+                    "rule",
+                    "VARCHAR",
+                    "Short heuristic name, e.g. 'inject:CreateRemoteThread'.",
+                ),
+                (
+                    "attack_id",
+                    "VARCHAR",
+                    "MITRE ATT&CK technique id, e.g. 'T1055.002'.",
+                ),
+                ("attack_name", "VARCHAR", "MITRE ATT&CK technique name."),
+                (
+                    "severity",
+                    "VARCHAR",
+                    "Advisory severity: info, low, medium, or high.",
+                ),
+                (
+                    "evidence",
+                    "VARCHAR",
+                    "The import name, string, or instruction that matched.",
+                ),
+            ]),
         ));
         tags.push(("vgi.executable_examples".into(), EXECUTABLE_EXAMPLES.into()));
         FunctionMetadata {

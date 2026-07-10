@@ -68,17 +68,16 @@ impl TableFunction for Sections {
             "Static Extraction",
         );
         tags.push((
-            "vgi.result_columns_md".into(),
-            "| column | type | description |\n\
-             |---|---|---|\n\
-             | `name` | VARCHAR | Section name. |\n\
-             | `kind` | VARCHAR | code/data/rodata/bss/debug/other. |\n\
-             | `vaddr` | UBIGINT | Virtual address. |\n\
-             | `size` | UBIGINT | Declared size. |\n\
-             | `file_off` | UBIGINT | File offset. |\n\
-             | `exec` | BOOLEAN | Executable flag. |\n\
-             | `entropy` | DOUBLE | Shannon entropy (0..8). |"
-                .into(),
+            "vgi.result_columns_schema".into(),
+            crate::meta::result_columns_schema_json(&[
+                ("name", "VARCHAR", "Section/segment name, e.g. '.text' or '__TEXT,__text'."),
+                ("kind", "VARCHAR", "Section class: code, data, rodata, bss, debug, or other."),
+                ("vaddr", "UBIGINT", "Virtual address of the section (absolute; PE adds image base)."),
+                ("size", "UBIGINT", "Declared section size in bytes (virtual size)."),
+                ("file_off", "UBIGINT", "File offset of the section's bytes."),
+                ("exec", "BOOLEAN", "True if the section is executable (the disassemble(section := 'auto') set)."),
+                ("entropy", "DOUBLE", "Shannon entropy (bits/byte, 0..8) over the section's file bytes; high values flag packing/encryption."),
+            ]),
         ));
         tags.push(("vgi.executable_examples".into(), EXECUTABLE_EXAMPLES.into()));
         FunctionMetadata {

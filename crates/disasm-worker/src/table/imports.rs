@@ -65,14 +65,13 @@ impl TableFunction for Imports {
             "Static Extraction",
         );
         tags.push((
-            "vgi.result_columns_md".into(),
-            "| column | type | description |\n\
-             |---|---|---|\n\
-             | `library` | VARCHAR | Importing library/DLL, or NULL. |\n\
-             | `name` | VARCHAR | Symbol name, or NULL (ordinal-only). |\n\
-             | `ordinal` | INTEGER | Import ordinal, or NULL. |\n\
-             | `kind` | VARCHAR | named / ordinal / delayed. |"
-                .into(),
+            "vgi.result_columns_schema".into(),
+            crate::meta::result_columns_schema_json(&[
+                ("library", "VARCHAR", "Importing library/DLL/dylib name, or NULL when the container does not attribute the symbol to one (typical for ELF)."),
+                ("name", "VARCHAR", "Imported symbol name, or NULL for an ordinal-only PE import."),
+                ("ordinal", "INTEGER", "Import ordinal (PE), or NULL."),
+                ("kind", "VARCHAR", "Import kind: named, ordinal, or delayed."),
+            ]),
         ));
         tags.push(("vgi.executable_examples".into(), EXECUTABLE_EXAMPLES.into()));
         FunctionMetadata {

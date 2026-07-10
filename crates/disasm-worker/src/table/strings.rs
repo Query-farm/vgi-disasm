@@ -71,13 +71,24 @@ impl TableFunction for Strings {
             "Static Extraction",
         );
         tags.push((
-            "vgi.result_columns_md".into(),
-            "| column | type | description |\n\
-             |---|---|---|\n\
-             | `offset` | UBIGINT | File offset of the run. |\n\
-             | `encoding` | VARCHAR | ascii / utf16le. |\n\
-             | `value` | VARCHAR | The decoded string. |"
-                .into(),
+            "vgi.result_columns_schema".into(),
+            crate::meta::result_columns_schema_json(&[
+                (
+                    "offset",
+                    "UBIGINT",
+                    "File offset of the first byte of the string run.",
+                ),
+                (
+                    "encoding",
+                    "VARCHAR",
+                    "Encoding of the run: ascii or utf16le.",
+                ),
+                (
+                    "value",
+                    "VARCHAR",
+                    "The decoded printable string (truncated to a bounded length).",
+                ),
+            ]),
         ));
         tags.push(("vgi.executable_examples".into(), EXECUTABLE_EXAMPLES.into()));
         FunctionMetadata {

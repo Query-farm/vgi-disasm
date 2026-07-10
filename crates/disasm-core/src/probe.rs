@@ -105,6 +105,18 @@ impl Probe {
     }
 }
 
+/// The architecture tokens the disassembler's `arch` argument accepts — the
+/// canonical primary names ([`resolve_explicit`] additionally maps common
+/// aliases such as `x64`/`aarch64` onto these). This is the single source of the
+/// closed `choices` set the worker advertises for `arch` and the rows of the
+/// `supported_targets` reference view, so metadata and behaviour cannot drift.
+pub const SUPPORTED_ARCHES: &[&str] = &["x86", "arm", "arm64", "mips", "ppc", "sysz", "riscv"];
+
+/// The decode-mode tokens the disassembler's `mode` argument accepts: `x16` /
+/// `x32` / `x64` select the x86 width; `arm` / `thumb` pick the 32-bit ARM
+/// instruction set; `big` / `little` set endianness for the remaining arches.
+pub const SUPPORTED_MODES: &[&str] = &["x16", "x32", "x64", "arm", "thumb", "big", "little"];
+
 /// Translate an explicit `arch` (+ optional `mode`) argument pair into an
 /// [`ArchSel`], applying sensible per-arch mode defaults. Returns `None` for an
 /// unknown arch string.

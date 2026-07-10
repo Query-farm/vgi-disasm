@@ -50,6 +50,50 @@ pub fn agent_test_tasks_json(tasks: &[(&str, &str, &str)]) -> String {
     format!("[{}]", items.join(","))
 }
 
+/// Encode a table function's static result columns as the JSON array of
+/// `{name, type, description}` objects that `vgi.result_columns_schema` requires
+/// (VGI307/VGI321/VGI322/VGI323). Each `type` must be a real DuckDB type and each
+/// `description` non-blank; the tuple order is the column order.
+pub fn result_columns_schema_json(columns: &[(&str, &str, &str)]) -> String {
+    fn esc(s: &str) -> String {
+        s.replace('\\', "\\\\").replace('"', "\\\"")
+    }
+    let items: Vec<String> = columns
+        .iter()
+        .map(|(name, ty, description)| {
+            format!(
+                "{{\"name\":\"{}\",\"type\":\"{}\",\"description\":\"{}\"}}",
+                esc(name),
+                esc(ty),
+                esc(description)
+            )
+        })
+        .collect();
+    format!("[{}]", items.join(","))
+}
+
+/// Encode an object-level `vgi.example_queries` value: a JSON array of
+/// `{description, sql}` objects (VGI502). Each `sql` should be fully
+/// catalog-qualified so it counts toward coverage and runs under `--execute`.
+pub fn example_queries_json(examples: &[(&str, &str)]) -> String {
+    fn esc(s: &str) -> String {
+        s.replace('\\', "\\\\")
+            .replace('"', "\\\"")
+            .replace('\n', "\\n")
+    }
+    let items: Vec<String> = examples
+        .iter()
+        .map(|(description, sql)| {
+            format!(
+                "{{\"description\":\"{}\",\"sql\":\"{}\"}}",
+                esc(description),
+                esc(sql)
+            )
+        })
+        .collect();
+    format!("[{}]", items.join(","))
+}
+
 /// Encode an ordered list of `(name, description)` categories as the JSON array
 /// of `{"name","description"}` objects that a schema's `vgi.categories` registry
 /// requires (VGI413). Each object then names one of these via `vgi.category`.

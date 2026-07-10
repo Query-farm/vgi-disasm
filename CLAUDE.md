@@ -41,7 +41,7 @@ test/sql/               # the .test files (LOAD vgi; ATTACH; assert) + test/sql/
 - **Pure core / thin worker.** All decode/parse/triage logic lives in
   `disasm-core` and is tested there directly. The worker crate only marshals
   Arrow. Don't put logic in the worker.
-- **Published SDK only.** `vgi = "0.11.0"`, arrow 59, vgi-rpc 0.8 — **no path
+- **Published SDK only.** `vgi = "0.17.0"`, arrow 59, vgi-rpc 0.11 — **no path
   deps**. Keep arrow/vgi-rpc pins in lockstep with vgi.
 - **License is MIT** (fleet convention). All deps are permissive (Capstone C
   engine BSD-3-Clause; bindings/goblin MIT; object MIT/Apache-2.0).
@@ -77,7 +77,7 @@ cargo clippy --all-targets --all-features -- -D warnings
 cargo fmt --all -- --check
 cargo test --workspace
 RUSTDOCFLAGS="-D warnings" cargo doc --no-deps --workspace
-uvx --from vgi-lint-check@0.37.0 vgi-lint lint "$PWD/target/release/disasm-worker" --catalog disasm --fail-on info
+uvx --from vgi-lint-check vgi-lint lint "$PWD/target/release/disasm-worker" --fail-on info
 HAYBARN_UNITTEST=$(command -v haybarn-unittest) WORKER_BIN="$PWD/target/release/disasm-worker" TRANSPORT=subprocess ci/run-integration.sh   # also http, unix
 ```
 
