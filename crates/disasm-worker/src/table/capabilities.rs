@@ -69,15 +69,25 @@ impl TableFunction for Capabilities {
              anti-analysis instruction patterns (rdtsc/cpuid timing, int3 / int 0x2d). One row \
              per match with rule, attack_id, attack_name, severity (advisory only), and the \
              matched evidence. This is a deliberate heuristic over curated reference tables — it \
-             is NOT a port of capa's rule engine. Input may be inline BLOB bytes or a VARCHAR path.",
+             is NOT a port of capa's rule engine. Input may be inline `BLOB` bytes or a `VARCHAR` \
+             path.",
             "Lightweight, [MITRE ATT&CK](https://attack.mitre.org/techniques/)-tagged capability \
              indicators for malware triage (`rule`, `attack_id`, `attack_name`, `severity`, \
              `evidence`), matched from three cheap signals — suspicious import names, interesting \
              strings, and anti-analysis instruction patterns. A deliberate heuristic over curated \
              reference tables; **not** a port of capa's rule engine.",
             &[
-                "capabilities", "mitre", "att&ck", "attack", "heuristic", "malware", "triage",
-                "process injection", "ransomware", "anti-debug", "anti-vm",
+                "capabilities",
+                "mitre",
+                "att&ck",
+                "attack",
+                "heuristic",
+                "malware",
+                "triage",
+                "process injection",
+                "ransomware",
+                "anti-debug",
+                "anti-vm",
             ],
             "Malware Triage",
         );
@@ -108,6 +118,15 @@ impl TableFunction for Capabilities {
             ]),
         ));
         tags.push(("vgi.executable_examples".into(), EXECUTABLE_EXAMPLES.into()));
+        tags.push((
+            "vgi.example_queries".into(),
+            crate::meta::example_queries_json(&[(
+                "Surface ATT&CK-tagged capability indicators (rule, technique id, evidence) for a \
+                 suspicious command line.",
+                "SELECT rule, attack_id, evidence FROM \
+                 disasm.main.capabilities('powershell.exe -EncodedCommand ZQA='::BLOB);",
+            )]),
+        ));
         FunctionMetadata {
             description: "Heuristic capability indicators mapped to MITRE ATT&CK (rule, \
                           attack_id, attack_name, severity, evidence) — not capa"

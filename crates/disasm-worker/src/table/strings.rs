@@ -53,7 +53,7 @@ impl TableFunction for Strings {
             "Classic strings-style extraction: runs of printable ASCII and UTF-16LE of length ≥ \
              min_len (default 4), each with its file offset and encoding (ascii or utf16le). \
              Feeds the string→indicator capability heuristics and is independently useful for \
-             triage. Output count is bounded. Input may be inline BLOB bytes or a VARCHAR path.",
+             triage. Output count is bounded. Input may be inline `BLOB` bytes or a `VARCHAR` path.",
             "Classic `strings`-style extraction of printable ASCII and UTF-16LE runs of length ≥ \
              `min_len` (default 4), each with its file `offset` and `encoding`. Feeds the \
              string→indicator capability heuristics and is independently useful for triage; the \
@@ -91,6 +91,14 @@ impl TableFunction for Strings {
             ]),
         ));
         tags.push(("vgi.executable_examples".into(), EXECUTABLE_EXAMPLES.into()));
+        tags.push((
+            "vgi.example_queries".into(),
+            crate::meta::example_queries_json(&[(
+                "Extract printable strings (length ≥ 6) from a blob, ordered by file offset.",
+                "SELECT \"offset\", encoding, value FROM \
+                 disasm.main.strings('cmd.exe /c whoami'::BLOB, min_len := 6) ORDER BY \"offset\";",
+            )]),
+        ));
         FunctionMetadata {
             description: "Extract printable ASCII and UTF-16LE strings from a blob (offset, \
                           encoding, value)"

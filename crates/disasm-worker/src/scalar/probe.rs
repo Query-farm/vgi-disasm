@@ -34,17 +34,20 @@ impl ScalarFunction for Format {
                           STRUCT(container, arch, mode, bits, endian, entry)"
                 .into(),
             examples: vec![FunctionExample {
-                sql: "SELECT disasm.main.format(from_hex('7f454c46'));".into(),
-                description: "Probe the ELF magic and report the container type.".into(),
+                sql: "SELECT (disasm.main.format(from_hex('7f454c46'))).container AS container;"
+                    .into(),
+                description: "Probe the ELF magic and report the detected container type.".into(),
                 expected_output: None,
             }],
-            tags: crate::meta::object_tags(
+            tags: {
+                let mut tags = crate::meta::object_tags(
                 "Probe Binary Format",
                 "Cheaply probe a blob's container and architecture WITHOUT disassembling: returns \
-                 a STRUCT(container, arch, mode, bits, endian, entry). container is one of pe, \
+                 a `STRUCT(container, arch, mode, bits, endian, entry)`. container is one of pe, \
                  elf, macho, fat-macho, or raw. The fast pre-filter for 'is this even a binary I \
-                 can disassemble' across a large scan. Input may be inline BLOB bytes or a VARCHAR \
-                 path. A raw/unrecognized blob returns container='raw' with NULL detail fields.",
+                 can disassemble' across a large scan. Input may be inline `BLOB` bytes or a \
+                 `VARCHAR` path. A raw/unrecognized blob returns container='raw' with NULL detail \
+                 fields.",
                 "Probe a blob's container/arch without disassembling — \
                  `STRUCT(container, arch, mode, bits, endian, entry)`.",
                 &[
@@ -62,7 +65,16 @@ impl ScalarFunction for Format {
                     "is binary",
                 ],
                 "Container Probe",
-            ),
+                );
+                tags.push((
+                    "vgi.example_queries".into(),
+                    crate::meta::example_queries_json(&[(
+                        "Probe the ELF magic and report the detected container type.",
+                        "SELECT (disasm.main.format(from_hex('7f454c46'))).container AS container;",
+                    )]),
+                ));
+                tags
+            },
             ..Default::default()
         }
     }
@@ -153,31 +165,41 @@ impl ScalarFunction for Entrypoint {
             examples: vec![FunctionExample {
                 sql: "SELECT (disasm.main.entrypoint('not a binary'::BLOB)).arch AS arch;".into(),
                 description: "Resolve a blob's entry point; a raw blob yields NULL fields. Pass a \
-                              real binary as inline BLOB bytes or a VARCHAR path."
+                              real binary as inline `BLOB` bytes or a `VARCHAR` path."
                     .into(),
                 expected_output: None,
             }],
-            tags: crate::meta::object_tags(
-                "Resolve Entry Point",
-                "Resolve the container entry point and the (arch, mode) it implies: returns a \
-                 STRUCT(arch, mode, vaddr, file_off, section). vaddr is the entry virtual address, \
-                 file_off its file offset, and section the section that contains it. For a Mach-O \
-                 fat binary the primary (first) slice is reported. A raw blob returns NULL struct \
-                 fields. Input may be inline BLOB bytes or a VARCHAR path.",
-                "Resolve a binary's entry point — \
+            tags: {
+                let mut tags = crate::meta::object_tags(
+                    "Resolve Entry Point",
+                    "Resolve the container entry point and the (arch, mode) it implies: returns a \
+                 `STRUCT(arch, mode, vaddr, file_off, section)`. vaddr is the entry virtual \
+                 address, file_off its file offset, and section the section that contains it. For \
+                 a Mach-O fat binary the primary (first) slice is reported. A raw blob returns \
+                 NULL struct fields. Input may be inline `BLOB` bytes or a `VARCHAR` path.",
+                    "Resolve a binary's entry point — \
                  `STRUCT(arch, mode, vaddr, file_off, section)`. NULL fields for a raw blob.",
-                &[
-                    "entrypoint",
-                    "entry point",
-                    "entry",
-                    "start address",
-                    "vaddr",
-                    "arch",
-                    "mode",
-                    "section",
-                ],
-                "Container Probe",
-            ),
+                    &[
+                        "entrypoint",
+                        "entry point",
+                        "entry",
+                        "start address",
+                        "vaddr",
+                        "arch",
+                        "mode",
+                        "section",
+                    ],
+                    "Container Probe",
+                );
+                tags.push((
+                    "vgi.example_queries".into(),
+                    crate::meta::example_queries_json(&[(
+                        "Resolve a blob's entry point; a raw blob yields NULL fields.",
+                        "SELECT (disasm.main.entrypoint('not a binary'::BLOB)).arch AS arch;",
+                    )]),
+                ));
+                tags
+            },
             ..Default::default()
         }
     }

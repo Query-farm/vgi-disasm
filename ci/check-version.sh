@@ -2,7 +2,7 @@
 # Copyright 2026 Query Farm LLC - https://query.farm
 #
 # Verify the workspace package version matches a GitHub Release / git tag, so the
-# version the worker advertises over VGI (`disasm_version()`), the published
+# version the worker advertises over VGI (catalog `implementation_version`), the published
 # release binaries, and the release all agree. Run on a version-tag push before
 # building/publishing anything.
 #

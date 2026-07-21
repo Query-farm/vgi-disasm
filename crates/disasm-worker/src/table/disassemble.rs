@@ -59,7 +59,7 @@ impl TableFunction for Disassemble {
              the address column and makes branch targets print absolute; section selects auto \
              (every executable section), all (the whole blob as raw bytes), or a section name. \
              Each row carries address, size, bytes, mnemonic, op_str, and a normalized groups \
-             LIST<VARCHAR> (call/jump/ret/int/privileged/branch_relative/fpu/sse/vm). Output is \
+             `LIST<VARCHAR>` (call/jump/ret/int/privileged/branch_relative/fpu/sse/vm). Output is \
              address-ordered and bounded; undecodable bytes become '.byte' rows so the sweep \
              never stalls. The input is statically decoded, never executed.",
             "Disassemble a binary or shellcode into instruction rows (`address`, `size`, `bytes`, \
@@ -98,6 +98,15 @@ impl TableFunction for Disassemble {
             ]),
         ));
         tags.push(("vgi.executable_examples".into(), EXECUTABLE_EXAMPLES.into()));
+        tags.push((
+            "vgi.example_queries".into(),
+            crate::meta::example_queries_json(&[(
+                "Disassemble a tiny x64 shellcode blob and project the instruction address, \
+                 mnemonic, and operands.",
+                "SELECT address, mnemonic, op_str FROM \
+                 disasm.main.disassemble(from_hex('554889e5c3'), arch := 'x86', mode := 'x64');",
+            )]),
+        ));
         FunctionMetadata {
             description: "Disassemble a binary or shellcode blob into one row per machine \
                           instruction (address, size, bytes, mnemonic, op_str, groups)"

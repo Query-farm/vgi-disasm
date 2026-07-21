@@ -44,7 +44,7 @@ impl TableFunction for Imports {
              Mach-O bind/lazy imports. One row per import with library, name, ordinal, and kind \
              (named, ordinal, delayed). This is the input to the import-name capability \
              heuristics and a join key to vgi-pe. A raw blob yields zero rows. Input may be \
-             inline BLOB bytes or a VARCHAR path.",
+             inline `BLOB` bytes or a `VARCHAR` path.",
             "Enumerate a binary's imported symbols (`library`, `name`, `ordinal`, `kind`) across \
              PE (import directory, including ordinal-only entries where `name` is NULL), ELF \
              (dynamic-symbol imports), and Mach-O (bind/lazy). The input to the import-name \
@@ -74,6 +74,14 @@ impl TableFunction for Imports {
             ]),
         ));
         tags.push(("vgi.executable_examples".into(), EXECUTABLE_EXAMPLES.into()));
+        tags.push((
+            "vgi.example_queries".into(),
+            crate::meta::example_queries_json(&[(
+                "Count the imported symbols of a blob (a raw blob has none); pass a real binary as \
+                 inline bytes or a path to list them.",
+                "SELECT count(*) AS n FROM disasm.main.imports('not a binary'::BLOB);",
+            )]),
+        ));
         FunctionMetadata {
             description:
                 "Enumerate the imported symbols of a binary (library, name, ordinal, kind)".into(),

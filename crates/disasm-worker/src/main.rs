@@ -31,7 +31,8 @@ mod table;
 use vgi::catalog::{CatSchema, CatView, CatalogModel};
 use vgi::Worker;
 
-/// Worker version string, surfaced by `disasm_version()`.
+/// Worker build version, published as the catalog's `implementation_version`
+/// (read via `catalog_catalogs()` / `duckdb_databases()`).
 pub fn version() -> &'static str {
     env!("CARGO_PKG_VERSION")
 }
@@ -90,7 +91,7 @@ fn catalog_metadata(name: &str) -> CatalogModel {
                  into one row per machine instruction (address, bytes, mnemonic, operands, \
                  instruction groups) via Capstone, and surface section/import/string relations \
                  plus heuristic MITRE ATT&CK capability tags for malware triage. Pure in-engine \
-                 static decoding over a BLOB — never executes the input, no network, no state."
+                 static decoding over a `BLOB` — never executes the input, no network, no state."
                     .to_string(),
             ),
             (
@@ -106,14 +107,14 @@ fn catalog_metadata(name: &str) -> CatalogModel {
                  egress.\n\n\
                  It pairs with `vgi-pe` (static PE/ELF/Mach-O metadata), `vgi-yara` (rule hits), \
                  and `vgi-ioc` (indicators) in a VGI security bundle. The worker is **pure static \
-                 compute over the input BLOB — it never executes the sample**, making it safe for \
+                 compute over the input `BLOB` — it never executes the sample**, making it safe for \
                  air-gapped / regulated malware repositories.\n\n\
                  **How it works.** You supply a sample as inline bytes or a filesystem path; the \
                  worker sniffs the container, resolves architecture and mode, statically decodes \
                  the executable sections, and tags heuristic behaviours against MITRE ATT&CK — all \
                  as ordinary SQL relations you can filter, aggregate, and join. Nothing is ever \
-                 run or emulated. List the schema to discover the available functions, or see the \
-                 [source repository](https://github.com/Query-farm/vgi-disasm)."
+                 run or emulated. See the [source repository](https://github.com/Query-farm/vgi-disasm) \
+                 for the full instruction/section/import/string/capability schema and licensing."
                     .to_string(),
             ),
             (
@@ -150,12 +151,6 @@ fn catalog_metadata(name: &str) -> CatalogModel {
                         "SELECT DISTINCT attack_id FROM \
                          disasm.main.capabilities('powershell.exe -EncodedCommand ZQA='::BLOB) \
                          ORDER BY attack_id",
-                    ),
-                    (
-                        "worker_version",
-                        "What version of the disasm worker is currently running? Return a single \
-                         row with one column named version.",
-                        "SELECT disasm.main.disasm_version() AS version",
                     ),
                     (
                         "entrypoint_raw_arch_null",
@@ -210,6 +205,10 @@ fn catalog_metadata(name: &str) -> CatalogModel {
             ),
         ],
         source_url: Some("https://github.com/Query-farm/vgi-disasm".to_string()),
+        // Publish the running build version as catalog metadata (read from
+        // `catalog_catalogs()` / `duckdb_databases()`) instead of spending a
+        // scalar-function slot on a parameterless `disasm_version()` (VGI328).
+        implementation_version: Some(version().to_string()),
         schemas: vec![CatSchema {
             name: "main".to_string(),
             comment: Some(
@@ -260,10 +259,25 @@ fn catalog_metadata(name: &str) -> CatalogModel {
                 ),
                 (
                     "vgi.example_queries".to_string(),
-                    "SELECT address, mnemonic, op_str FROM disasm.main.disassemble(from_hex('554889e5c3'), arch := 'x86', mode := 'x64');\n\
-                     SELECT (disasm.main.format(from_hex('7f454c46'))).container;\n\
-                     SELECT count(*) FROM disasm.main.capabilities('powershell -enc ZQA='::BLOB);"
-                        .to_string(),
+                    crate::meta::example_queries_json(&[
+                        (
+                            "Disassemble an x64 shellcode blob and project the instruction address, \
+                             mnemonic, and operands.",
+                            "SELECT address, mnemonic, op_str FROM \
+                             disasm.main.disassemble(from_hex('554889e5c3'), arch := 'x86', mode := 'x64')",
+                        ),
+                        (
+                            "Probe a blob by its magic bytes and read back just the detected \
+                             container format.",
+                            "SELECT (disasm.main.format(from_hex('7f454c46'))).container AS container",
+                        ),
+                        (
+                            "Count the heuristic MITRE ATT&CK capability hits on a suspicious \
+                             command line.",
+                            "SELECT count(*) AS n FROM \
+                             disasm.main.capabilities('powershell -enc ZQA='::BLOB)",
+                        ),
+                    ]),
                 ),
             ],
             views: vec![supported_targets_view()],

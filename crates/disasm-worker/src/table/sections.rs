@@ -46,7 +46,7 @@ impl TableFunction for Sections {
              section with name, kind (code/data/rodata/bss/debug/other), vaddr, size, file_off, \
              an exec flag (the executable sections disassemble(section:='auto') sweeps), and \
              Shannon entropy over the section bytes (a packed/encrypted-section flag). A raw blob \
-             yields zero rows. Input may be inline BLOB bytes or a VARCHAR path.",
+             yields zero rows. Input may be inline `BLOB` bytes or a `VARCHAR` path.",
             "Enumerate the sections/segments of a [PE](https://learn.microsoft.com/windows/win32/debug/pe-format) \
              / [ELF](https://refspecs.linuxfoundation.org/elf/elf.pdf) / Mach-O binary (`name`, \
              `kind`, `vaddr`, `size`, `file_off`, `exec`, `entropy`). `exec` marks the executable \
@@ -80,6 +80,14 @@ impl TableFunction for Sections {
             ]),
         ));
         tags.push(("vgi.executable_examples".into(), EXECUTABLE_EXAMPLES.into()));
+        tags.push((
+            "vgi.example_queries".into(),
+            crate::meta::example_queries_json(&[(
+                "Count the sections of a blob (a raw blob has none); pass a real binary as inline \
+                 bytes or a path to enumerate them.",
+                "SELECT count(*) AS n FROM disasm.main.sections('not a binary'::BLOB);",
+            )]),
+        ));
         FunctionMetadata {
             description: "Enumerate the sections/segments of a binary (name, kind, vaddr, size, \
                           file_off, exec, entropy)"

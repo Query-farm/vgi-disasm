@@ -42,7 +42,10 @@ SET search_path = 'disasm.main';
 | Capabilities | `capabilities(blob) -> TABLE(rule, attack_id, attack_name, severity, evidence)` | table |
 | Entry point | `entrypoint(blob) -> STRUCT(arch, mode, vaddr UBIGINT, file_off UBIGINT, section)` | scalar |
 | Format probe | `format(blob) -> STRUCT(container, arch, mode, bits UTINYINT, endian, entry UBIGINT)` | scalar |
-| Version | `disasm_version() -> VARCHAR` | scalar |
+
+The running build version is published as the catalog's `implementation_version`
+(read it from `duckdb_databases()` / `catalog_catalogs()`), not as a
+parameterless function.
 
 **Input: bytes _or_ path.** Every function accepts the binary either as inline
 `BLOB` bytes or as a `VARCHAR` filesystem path it opens and reads (the bytes are
