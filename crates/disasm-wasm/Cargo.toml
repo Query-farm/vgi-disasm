@@ -1,0 +1,20 @@
+[package]
+name = "disasm-wasm"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "Browser (emscripten) build of the disasm VGI worker, served over a SharedArrayBuffer channel"
+publish = false
+
+# staticlib: emcc links this into the Web Worker module (see wasm/build.sh).
+# Cargo never emits a .wasm for it directly.
+[lib]
+name = "disasm_wasm"
+crate-type = ["staticlib"]
+path = "src/lib.rs"
+
+[dependencies]
+disasm-worker = { path = "../disasm-worker" }
+vgi = { workspace = true }

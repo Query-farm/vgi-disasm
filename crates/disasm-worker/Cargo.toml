@@ -8,16 +8,33 @@ authors.workspace = true
 repository.workspace = true
 description = "VGI worker that disassembles PE/ELF/Mach-O binaries and shellcode into instruction rows over Apache Arrow, with section/import/string/capability triage for DuckDB"
 
+[lib]
+name = "disasm_worker"
+path = "src/lib.rs"
+
 [[bin]]
 name = "disasm-worker"
 path = "src/main.rs"
 
 [dependencies]
-vgi.workspace = true
-vgi-rpc.workspace = true
 arrow-array.workspace = true
 arrow-buffer.workspace = true
 arrow-schema.workspace = true
 disasm-core.workspace = true
 log = "0.4"
+
+# --- Native ---------------------------------------------------------------
+# The SDK's real default features — unchanged from before the wasm split: the
+# bundled SQLite catalog store and the stdio/HTTP transport.
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+vgi = { workspace = true, features = ["sqlite", "transport-http"] }
+vgi-rpc = { workspace = true, features = ["http"] }
 env_logger = "0.11"
+
+# --- wasm32 ---------------------------------------------------------------
+# No sqlite (C) and no HTTP transport (tokio/mio/axum); the bincode stream codec
+# is what the SAB byte-channel transport needs. No env_logger (its stderr init
+# is native-only; the browser build serves over a byte channel).
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+vgi = { workspace = true }
+vgi-rpc = { workspace = true, features = ["stream-codec"] }
