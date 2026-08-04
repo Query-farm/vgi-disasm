@@ -38,7 +38,7 @@ arrow-schema = "59"
 #   object    -> MIT/Apache-2.0 cross-format object access (secondary reader).
 capstone = "0.14"
 goblin = "0.10"
-object = "0.39"
+object = "0.40"
 
 # The pure logic crate (container parse, sweep, triage), shared by the worker
 # and exercised directly by golden-vector + proptest suites.
