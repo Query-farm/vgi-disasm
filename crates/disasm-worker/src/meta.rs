@@ -27,10 +27,10 @@ pub fn keywords_json(keywords: &str) -> String {
 }
 
 /// Build the `vgi.agent_test_tasks` JSON value: a fixed suite of analyst tasks
-/// that `vgi-lint simulate` runs. Each `(name, prompt, reference_sql)` triple
-/// becomes a task object; `reference_sql` (the canonical solution) is hidden and
-/// used to grade.
-pub fn agent_test_tasks_json(tasks: &[(&str, &str, &str)]) -> String {
+/// that `vgi-lint simulate` runs. Each `(name, prompt)` pair becomes a task
+/// object. The graders (`reference_sql`) are private and live in
+/// `vgi-agent-tests.yaml` at the repo root, keyed by task name (VGI416).
+pub fn agent_test_tasks_json(tasks: &[(&str, &str)]) -> String {
     fn esc(s: &str) -> String {
         s.replace('\\', "\\\\")
             .replace('"', "\\\"")
@@ -38,12 +38,11 @@ pub fn agent_test_tasks_json(tasks: &[(&str, &str, &str)]) -> String {
     }
     let items: Vec<String> = tasks
         .iter()
-        .map(|(name, prompt, reference_sql)| {
+        .map(|(name, prompt)| {
             format!(
-                "{{\"name\":\"{}\",\"prompt\":\"{}\",\"reference_sql\":\"{}\"}}",
+                "{{\"name\":\"{}\",\"prompt\":\"{}\"}}",
                 esc(name),
-                esc(prompt),
-                esc(reference_sql)
+                esc(prompt)
             )
         })
         .collect();

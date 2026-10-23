@@ -16,21 +16,21 @@ authors = ["Query Farm LLC <hello@query.farm>"]
 repository = "https://github.com/Query-farm/vgi-disasm"
 
 [workspace.dependencies]
-# VGI Rust SDK (worker side), published on crates.io. Pulls in vgi-rpc 0.11 and
-# arrow 59 transitively; keep arrow/vgi-rpc here in lockstep with vgi's pins so a
+# VGI Rust SDK (worker side), published on crates.io. Pulls in vgi-rpc 0.32 and
+# arrow 60 transitively; keep arrow/vgi-rpc here in lockstep with vgi's pins so a
 # single arrow/vgi-rpc resolves.
-# VGI Rust SDK (worker side). 0.24 provides the wasm `vgi::wasm_worker!` macro
+# VGI Rust SDK (worker side). 0.24+ provides the wasm `vgi::wasm_worker!` macro
 # used by disasm-wasm; requires rustc 1.97 (see rust-version above). Base
 # (feature-less) so each target can opt in: the native build takes the SDK's
 # real defaults (`sqlite` + `transport-http`), while the wasm build must NOT —
 # tokio/mio/axum and bundled SQLite do not compile for wasm32, and the browser
 # transport serves over a byte channel rather than HTTP. Features are additive,
 # and the two are behind mutually-exclusive target cfgs.
-vgi = { version = "0.24", default-features = false }
-vgi-rpc = { version = "0.16", default-features = false, features = ["macros"] }
-arrow-array = "59"
-arrow-buffer = "59"
-arrow-schema = "59"
+vgi = { version = "0.46", default-features = false }
+vgi-rpc = { version = "0.32", default-features = false, features = ["macros"] }
+arrow-array = "60"
+arrow-buffer = "60"
+arrow-schema = "60"
 
 # Disassembly + container parsing (all permissive; see README "Licensing"):
 #   capstone  -> MIT bindings over the BSD-3-Clause Capstone C engine (bundled).
@@ -38,7 +38,7 @@ arrow-schema = "59"
 #   object    -> MIT/Apache-2.0 cross-format object access (secondary reader).
 capstone = "0.14"
 goblin = "0.10"
-object = "0.39"
+object = "0.40"
 
 # The pure logic crate (container parse, sweep, triage), shared by the worker
 # and exercised directly by golden-vector + proptest suites.

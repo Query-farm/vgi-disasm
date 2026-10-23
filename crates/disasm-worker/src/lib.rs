@@ -130,67 +130,50 @@ fn catalog_metadata(name: &str) -> CatalogModel {
                         "I have x64 shellcode as the hex string '554889e5c3'. Disassemble it and \
                          tell me how many machine instructions it contains. Return a single \
                          column named n.",
-                        "SELECT count(*) AS n FROM disasm.main.disassemble(from_hex('554889e5c3'), \
-                         arch := 'x86', mode := 'x64')",
                     ),
                     (
                         "find_ret_sites",
                         "In the x64 shellcode hex '554889e5c3', list the addresses of every \
                          return instruction, assuming it loads at address 4096. Return a single \
                          column named address.",
-                        "SELECT address FROM disasm.main.disassemble(from_hex('554889e5c3'), \
-                         arch := 'x86', mode := 'x64', base := 4096) WHERE list_contains(groups, \
-                         'ret') ORDER BY address",
                     ),
                     (
                         "probe_container",
                         "Is the blob with hex bytes '7f454c46' a recognized binary container, and \
                          which one? Return a single column named container.",
-                        "SELECT (disasm.main.format(from_hex('7f454c46'))).container AS container",
                     ),
                     (
                         "powershell_capability",
                         "Does the text 'powershell.exe -EncodedCommand ZQA=' trip any MITRE \
                          ATT&CK capability heuristic? Return the distinct attack_id values in a \
                          column named attack_id.",
-                        "SELECT DISTINCT attack_id FROM \
-                         disasm.main.capabilities('powershell.exe -EncodedCommand ZQA='::BLOB) \
-                         ORDER BY attack_id",
                     ),
                     (
                         "entrypoint_raw_arch_null",
                         "The blob whose bytes are the text 'not a binary' is not a real \
                          executable. Resolve its entry point and tell me whether the resolved \
                          architecture is NULL. Return a single boolean column named arch_is_null.",
-                        "SELECT (disasm.main.entrypoint('not a binary'::BLOB)).arch IS NULL AS \
-                         arch_is_null",
                     ),
                     (
                         "sections_of_non_container",
                         "How many sections does the blob whose bytes are the text 'not a binary' \
                          contain? It is not a real container. Return a single column named n.",
-                        "SELECT count(*) AS n FROM disasm.main.sections('not a binary'::BLOB)",
                     ),
                     (
                         "imports_present",
                         "Does the blob whose bytes are the text 'not a binary' import any \
                          symbols? Return a single boolean column named has_imports.",
-                        "SELECT count(*) > 0 AS has_imports FROM \
-                         disasm.main.imports('not a binary'::BLOB)",
                     ),
                     (
                         "strings_extract_url",
                         "Extract the printable ASCII strings from the blob whose bytes are the \
                          text 'http://evil.example/c2'. Return them ordered alphabetically in a \
                          single column named value.",
-                        "SELECT value FROM disasm.main.strings('http://evil.example/c2'::BLOB) \
-                         WHERE encoding = 'ascii' ORDER BY value",
                     ),
                     (
                         "supported_arch_list",
                         "Which architectures can this worker disassemble? List them alphabetically \
                          in a single column named arch.",
-                        "SELECT arch FROM disasm.main.supported_targets ORDER BY arch",
                     ),
                 ]),
             ),
@@ -216,6 +199,7 @@ fn catalog_metadata(name: &str) -> CatalogModel {
         implementation_version: Some(version().to_string()),
         schemas: vec![CatSchema {
             name: "main".to_string(),
+            path: Vec::new(),
             comment: Some(
                 "Disassembly, container-introspection, and malware-triage functions.".to_string(),
             ),

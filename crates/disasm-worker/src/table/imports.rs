@@ -158,4 +158,8 @@ impl TableProducer for ImportsProducer {
                 .map_err(|e| RpcError::runtime_error(e.to_string()))?,
         ))
     }
+    fn resume_supported(&self) -> bool {
+        // Single batch: the whole result is materialised at producer() time, so there is no cursor to resume.
+        false
+    }
 }

@@ -1,0 +1,26 @@
+# Private graders for the agent-suitability suite (`vgi-lint simulate`).
+#
+# The prompts are published in the catalog vgi.agent_test_tasks tag
+# (crates/disasm-worker/src/lib.rs); the answers live here, keyed by task name,
+# so the agent being graded never sees them (VGI416). vgi-lint discovers this
+# file in the directory it runs from.
+
+tasks:
+  - name: "disassemble_shellcode_count"
+    reference_sql: "SELECT count(*) AS n FROM disasm.main.disassemble(from_hex('554889e5c3'), arch := 'x86', mode := 'x64')"
+  - name: "find_ret_sites"
+    reference_sql: "SELECT address FROM disasm.main.disassemble(from_hex('554889e5c3'), arch := 'x86', mode := 'x64', base := 4096) WHERE list_contains(groups, 'ret') ORDER BY address"
+  - name: "probe_container"
+    reference_sql: "SELECT (disasm.main.format(from_hex('7f454c46'))).container AS container"
+  - name: "powershell_capability"
+    reference_sql: "SELECT DISTINCT attack_id FROM disasm.main.capabilities('powershell.exe -EncodedCommand ZQA='::BLOB) ORDER BY attack_id"
+  - name: "entrypoint_raw_arch_null"
+    reference_sql: "SELECT (disasm.main.entrypoint('not a binary'::BLOB)).arch IS NULL AS arch_is_null"
+  - name: "sections_of_non_container"
+    reference_sql: "SELECT count(*) AS n FROM disasm.main.sections('not a binary'::BLOB)"
+  - name: "imports_present"
+    reference_sql: "SELECT count(*) > 0 AS has_imports FROM disasm.main.imports('not a binary'::BLOB)"
+  - name: "strings_extract_url"
+    reference_sql: "SELECT value FROM disasm.main.strings('http://evil.example/c2'::BLOB) WHERE encoding = 'ascii' ORDER BY value"
+  - name: "supported_arch_list"
+    reference_sql: "SELECT arch FROM disasm.main.supported_targets ORDER BY arch"
