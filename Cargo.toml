@@ -17,7 +17,7 @@ repository = "https://github.com/Query-farm/vgi-disasm"
 
 [workspace.dependencies]
 # VGI Rust SDK (worker side), published on crates.io. Pulls in vgi-rpc 0.32 and
-# arrow 60 transitively; keep arrow/vgi-rpc here in lockstep with vgi's pins so a
+# arrow 59 transitively; keep arrow/vgi-rpc here in lockstep with vgi's pins so a
 # single arrow/vgi-rpc resolves.
 # VGI Rust SDK (worker side). 0.24+ provides the wasm `vgi::wasm_worker!` macro
 # used by disasm-wasm; requires rustc 1.97 (see rust-version above). Base
@@ -26,11 +26,11 @@ repository = "https://github.com/Query-farm/vgi-disasm"
 # tokio/mio/axum and bundled SQLite do not compile for wasm32, and the browser
 # transport serves over a byte channel rather than HTTP. Features are additive,
 # and the two are behind mutually-exclusive target cfgs.
-vgi = { version = "0.46", default-features = false }
-vgi-rpc = { version = "0.32", default-features = false, features = ["macros"] }
-arrow-array = "60"
-arrow-buffer = "60"
-arrow-schema = "60"
+vgi = { version = "0.49.2", default-features = false }
+vgi-rpc = { version = "0.32.3", default-features = false, features = ["macros"] }
+arrow-array = "59.2"
+arrow-buffer = "59.2"
+arrow-schema = "59.2"
 
 # Disassembly + container parsing (all permissive; see README "Licensing"):
 #   capstone  -> MIT bindings over the BSD-3-Clause Capstone C engine (bundled).

@@ -361,6 +361,7 @@ fn supported_targets_view() -> CatView {
                 "When and how to set mode for this architecture.".to_string(),
             ),
         ],
+        ..Default::default()
     }
 }
 

@@ -52,7 +52,7 @@ WHERE list_contains(groups, 'call') AND list_contains(groups, 'branch_relative')
 query I
 SELECT count(*)
 FROM disassemble(from_hex('554889e5c3'), arch := 'x86', mode := 'x64')
-WHERE len(list_filter(groups, g -> starts_with(g, 'mode'))) > 0;
+WHERE len(list_filter(groups, lambda g: starts_with(g, 'mode'))) > 0;
 ----
 0
 
