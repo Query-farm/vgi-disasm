@@ -696,7 +696,7 @@ dependencies = [
 
 [[package]]
 name = "disasm-core"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "capstone",
  "goblin",
@@ -706,7 +706,7 @@ dependencies = [
 
 [[package]]
 name = "disasm-wasm"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "disasm-worker",
  "vgi",
@@ -714,7 +714,7 @@ dependencies = [
 
 [[package]]
 name = "disasm-worker"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "arrow-array",
  "arrow-buffer",
