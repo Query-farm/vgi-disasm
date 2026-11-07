@@ -75,6 +75,7 @@ impl ScalarFunction for Format {
                 ));
                 tags
             },
+            return_type: Some(DataType::Struct(format_struct_fields())),
             ..Default::default()
         }
     }
@@ -200,6 +201,7 @@ impl ScalarFunction for Entrypoint {
                 ));
                 tags
             },
+            return_type: Some(DataType::Struct(entrypoint_struct_fields())),
             ..Default::default()
         }
     }
