@@ -24,12 +24,46 @@ repositories.
 > do. v1 capability detection is a small import/string/anti-analysis heuristic; it
 > is deliberately **not** a port of capa's rule engine.
 
+## Quick start
+
+Every [GitHub release](https://github.com/Query-farm/vgi-disasm/releases) ships a prebuilt worker binary. The `vgi` extension downloads the one for your platform, checks its SHA-256 and caches it, so there is nothing to install besides DuckDB:
+
+```sql
+INSTALL vgi FROM community;
+LOAD vgi;
+
+ATTACH 'disasm' AS disasm (TYPE vgi, LOCATION 'github-auto://Query-farm/vgi-disasm@v0.2.1');
+
+-- Disassemble an x64 shellcode blob and project the instruction address, mnemonic, and
+-- operands.
+SELECT address, mnemonic, op_str FROM disasm.main.disassemble(from_hex('554889e5c3'), arch := 'x86', mode := 'x64');
+
+-- Probe a blob by its magic bytes and read back just the detected container format.
+SELECT (disasm.main.format(from_hex('7f454c46'))).container AS container;
+```
+
+Prebuilt binaries cover macOS (Apple silicon), Linux (x86-64 and arm64) and Windows (x86-64). `github-auto://` needs an explicit release tag; change `@v0.2.1` to move to a newer release.
+
+### Other ways to run it
+
+- **Docker** (the image bundles the worker; needs a container runtime):
+
+  ```sql
+  ATTACH 'disasm' AS disasm (TYPE vgi, LOCATION 'docker://ghcr.io/query-farm/vgi-disasm:0.2.0');
+  ```
+
+- **Manual download.** Download the archive for your platform from the [releases page](https://github.com/Query-farm/vgi-disasm/releases), verify it against its `.sha256` file (a cosign `.cosign.bundle` is published alongside), unpack it, and set `LOCATION` to the path of the extracted worker executable.
+
+### Build from source
+
+To build the worker yourself, see [Building & testing](#building--testing).
+
 ## SQL surface
 
 ```sql
 INSTALL vgi FROM community;
 LOAD vgi;
-ATTACH 'vgi-disasm' AS disasm (TYPE vgi, LOCATION '/path/to/disasm-worker');
+ATTACH 'vgi-disasm' AS disasm (TYPE vgi, LOCATION 'github-auto://Query-farm/vgi-disasm@v0.2.1');
 SET search_path = 'disasm.main';
 ```
 
