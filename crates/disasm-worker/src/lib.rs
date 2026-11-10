@@ -83,6 +83,11 @@ fn catalog_metadata(name: &str) -> CatalogModel {
                 "Disassembly & Malware Triage".to_string(),
             ),
             (
+                "vgi.subtitle".to_string(),
+                "Disassemble binaries and shellcode, then triage their sections, imports,                  strings, and MITRE ATT&CK capabilities."
+                    .to_string(),
+            ),
+            (
                 "vgi.keywords".to_string(),
                 crate::meta::keywords_json(
                     "disassemble, disassembly, capstone, instructions, shellcode, malware, \
@@ -204,7 +209,7 @@ fn catalog_metadata(name: &str) -> CatalogModel {
                 "Disassembly, container-introspection, and malware-triage functions.".to_string(),
             ),
             tags: vec![
-                ("vgi.title".to_string(), "Disasm — main".to_string()),
+                ("vgi.title".to_string(), "Disassembly functions".to_string()),
                 (
                     "vgi.keywords".to_string(),
                     crate::meta::keywords_json(
