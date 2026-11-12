@@ -32,7 +32,7 @@ Every [GitHub release](https://github.com/Query-farm/vgi-disasm/releases) ships 
 INSTALL vgi FROM community;
 LOAD vgi;
 
-ATTACH 'disasm' AS disasm (TYPE vgi, LOCATION 'github-auto://Query-farm/vgi-disasm@v0.3.0');
+ATTACH 'disasm' AS disasm (TYPE vgi, LOCATION 'github-auto://Query-farm/vgi-disasm@v0.4.0');
 
 -- Disassemble an x64 shellcode blob and project the instruction address, mnemonic, and
 -- operands.
@@ -42,14 +42,14 @@ SELECT address, mnemonic, op_str FROM disasm.main.disassemble(from_hex('554889e5
 SELECT (disasm.main.format(from_hex('7f454c46'))).container AS container;
 ```
 
-Prebuilt binaries cover macOS (Apple silicon), Linux (x86-64 and arm64) and Windows (x86-64). `github-auto://` needs an explicit release tag; change `@v0.3.0` to move to a newer release.
+Prebuilt binaries cover macOS (Apple silicon), Linux (x86-64 and arm64) and Windows (x86-64). `github-auto://` needs an explicit release tag; change `@v0.4.0` to move to a newer release.
 
 ### Other ways to run it
 
 - **Docker** (the image bundles the worker; needs a container runtime):
 
   ```sql
-  ATTACH 'disasm' AS disasm (TYPE vgi, LOCATION 'docker://ghcr.io/query-farm/vgi-disasm:0.3.0');
+  ATTACH 'disasm' AS disasm (TYPE vgi, LOCATION 'docker://ghcr.io/query-farm/vgi-disasm:0.4.0');
   ```
 
 - **Manual download.** Download the archive for your platform from the [releases page](https://github.com/Query-farm/vgi-disasm/releases), verify it against its `.sha256` file (a cosign `.cosign.bundle` is published alongside), unpack it, and set `LOCATION` to the path of the extracted worker executable.
@@ -63,7 +63,7 @@ To build the worker yourself, see [Building & testing](#building--testing).
 ```sql
 INSTALL vgi FROM community;
 LOAD vgi;
-ATTACH 'vgi-disasm' AS disasm (TYPE vgi, LOCATION 'github-auto://Query-farm/vgi-disasm@v0.3.0');
+ATTACH 'vgi-disasm' AS disasm (TYPE vgi, LOCATION 'github-auto://Query-farm/vgi-disasm@v0.4.0');
 SET search_path = 'disasm.main';
 ```
 
