@@ -24,6 +24,11 @@ repositories.
 > do. v1 capability detection is a small import/string/anti-analysis heuristic; it
 > is deliberately **not** a port of capa's rule engine.
 
+## Executed notebooks
+
+See [the SQL and visualization examples](notebooks/README.md) for a portable,
+executed comparison of decoding modes, instruction boundaries and byte coverage.
+
 ## Quick start
 
 Every [GitHub release](https://github.com/Query-farm/vgi-disasm/releases) ships a prebuilt worker binary. The `vgi` extension downloads the one for your platform, checks its SHA-256 and caches it, so there is nothing to install besides DuckDB:
