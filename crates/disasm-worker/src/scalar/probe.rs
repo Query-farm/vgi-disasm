@@ -163,13 +163,17 @@ impl ScalarFunction for Entrypoint {
             description: "The container entry point and resolved (arch, mode): \
                           STRUCT(arch, mode, vaddr, file_off, section)"
                 .into(),
-            examples: vec![FunctionExample {
-                sql: "SELECT (disasm.main.entrypoint('not a binary'::BLOB)).arch AS arch;".into(),
-                description: "Resolve a blob's entry point; a raw blob yields NULL fields. Pass a \
-                              real binary as inline `BLOB` bytes or a `VARCHAR` path."
-                    .into(),
-                expected_output: None,
-            }],
+            examples: vec![
+                FunctionExample {
+                    sql: "SELECT (disasm.main.entrypoint('not a binary'::BLOB)).arch AS arch;"
+                        .into(),
+                    description: "Resolve a blob's entry point; a raw blob yields NULL fields. \
+                                  Pass a real binary as inline `BLOB` bytes or a `VARCHAR` path."
+                        .into(),
+                    expected_output: None,
+                },
+                crate::examples::function_example(crate::examples::ENTRY_SECTION),
+            ],
             tags: {
                 let mut tags = crate::meta::object_tags(
                     "Resolve Entry Point",
@@ -194,10 +198,13 @@ impl ScalarFunction for Entrypoint {
                 );
                 tags.push((
                     "vgi.example_queries".into(),
-                    crate::meta::example_queries_json(&[(
-                        "Resolve a blob's entry point; a raw blob yields NULL fields.",
-                        "SELECT (disasm.main.entrypoint('not a binary'::BLOB)).arch AS arch;",
-                    )]),
+                    crate::meta::example_queries_json(&[
+                        (
+                            "Resolve a blob's entry point; a raw blob yields NULL fields.",
+                            "SELECT (disasm.main.entrypoint('not a binary'::BLOB)).arch AS arch;",
+                        ),
+                        crate::examples::ENTRY_SECTION,
+                    ]),
                 ));
                 tags
             },

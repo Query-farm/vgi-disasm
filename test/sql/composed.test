@@ -1,0 +1,50 @@
+# name: test/sql/composed.test
+# group: [vgi_disasm]
+#
+# The composed example queries published in the catalog metadata
+# (crates/disasm-worker/src/examples.rs): queries that combine two or more of
+# the worker's objects. Keep these in step with that file.
+
+require-env VGI_DISASM_WORKER
+
+statement ok
+LOAD vgi;
+
+statement ok
+ATTACH 'vgi-disasm' AS disasm (TYPE vgi, LOCATION '${VGI_DISASM_WORKER}');
+
+# capabilities() joined to strings(): every string-based indicator is located at
+# the file offset of the string it matched.
+query TTTIT
+SELECT c.rule, c.attack_id, c.severity, s."offset", s.value FROM disasm.main.capabilities('cmd.exe /c whoami\x00schtasks /create /tn upd /tr evil.exe\x00http://evil.example/c2'::BLOB) AS c JOIN disasm.main.strings('cmd.exe /c whoami\x00schtasks /create /tn upd /tr evil.exe\x00http://evil.example/c2'::BLOB) AS s ON s.value = c.evidence ORDER BY s."offset", c.rule;
+----
+exec:cmd	T1059.003	medium	0	cmd.exe /c whoami
+persist:schtasks	T1053.005	medium	18	schtasks /create /tn upd /tr evil.exe
+net:url	T1071	info	56	http://evil.example/c2
+
+# sections() joined to disassemble() by address range: per-executable-section
+# instruction and call counts.
+query TII
+SELECT s.name, count(d.address) AS n_insns, count(d.address) FILTER (WHERE list_contains(d.groups, 'call')) AS n_calls FROM disasm.main.sections('test/sql/data/hello-macho-arm64') AS s LEFT JOIN disasm.main.disassemble('test/sql/data/hello-macho-arm64') AS d ON d.address >= s.vaddr AND d.address < s.vaddr + s.size WHERE s.exec GROUP BY s.name, s.vaddr ORDER BY s.vaddr;
+----
+__TEXT,__text	8	1
+__TEXT,__stubs	3	0
+__TEXT,__stub_helper	9	0
+
+# entrypoint() joined to sections(): the entry point lands in the code section.
+query TTI
+SELECT ep.e.section, s.kind, s.exec::INT FROM (SELECT disasm.main.entrypoint('test/sql/data/hello-macho-arm64') AS e) AS ep JOIN disasm.main.sections('test/sql/data/hello-macho-arm64') AS s ON s.name = ep.e.section ORDER BY s.vaddr;
+----
+__TEXT,__text	code	1
+
+# The README's struct-expansion form: unnest() a scalar's STRUCT result into
+# columns (DuckDB 2.0 rejects the older `(entrypoint(...)).*` spelling).
+query TTT
+SELECT arch, mode, section FROM (SELECT unnest(disasm.main.entrypoint('test/sql/data/hello-macho-arm64')));
+----
+arm64	little	__TEXT,__text
+
+query T
+SELECT container FROM (SELECT unnest(disasm.main.format('test/sql/data/hello-macho-arm64')));
+----
+macho

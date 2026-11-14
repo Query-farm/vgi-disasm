@@ -22,5 +22,7 @@ tasks:
     reference_sql: "SELECT count(*) > 0 AS has_imports FROM disasm.main.imports('not a binary'::BLOB)"
   - name: "strings_extract_url"
     reference_sql: "SELECT value FROM disasm.main.strings('http://evil.example/c2'::BLOB) WHERE encoding = 'ascii' ORDER BY value"
+  - name: "entry_function_length"
+    reference_sql: "WITH ep AS (SELECT (disasm.main.entrypoint('test/sql/data/hello-macho-arm64')).vaddr AS entry), d AS (SELECT address, mnemonic FROM disasm.main.disassemble('test/sql/data/hello-macho-arm64')) SELECT count(*) AS n FROM d, ep WHERE d.address >= ep.entry AND d.address <= (SELECT min(d2.address) FROM d AS d2 WHERE d2.address >= ep.entry AND d2.mnemonic = 'ret')"
   - name: "supported_arch_list"
     reference_sql: "SELECT arch FROM disasm.main.supported_targets ORDER BY arch"

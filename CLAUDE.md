@@ -24,6 +24,7 @@ crates/
   disasm-worker/        # VGI SDK Arrow adapter over disasm-core.
     src/main.rs         #   catalog metadata + scalar/table registration + Worker::run
     src/arrow_io.rs     #   BLOB|path input resolution + struct field types + test harness
+    src/examples.rs     #   composed (multi-object) example SQL, shared by schema + object lists
     src/scalar/         #   format, entrypoint (version → catalog implementation_version)
     src/table/          #   disassemble, sections, imports, strings, capabilities
 ci/                     # haybarn SQLLogic E2E across the subprocess/unix/http transport matrix

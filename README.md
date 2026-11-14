@@ -112,14 +112,25 @@ ORDER BY address;
 -- 3. Sections, imports, and the entry point of a sample.
 SELECT name, kind, exec, entropy FROM sections('sample.bin');
 SELECT library, name, ordinal, kind   FROM imports('sample.bin');
-SELECT (entrypoint('sample.bin')).*;
-SELECT (format('sample.bin')).*;        -- fast "is this a binary I can disassemble?"
+SELECT unnest(entrypoint('sample.bin'));
+SELECT unnest(format('sample.bin'));    -- fast "is this a binary I can disassemble?"
 
 -- 4. Heuristic capabilities mapped to MITRE ATT&CK for one sample (the input is
 --    a constant path or BLOB, per the note above), filtered to a technique family.
 SELECT rule, attack_id, attack_name, severity, evidence
 FROM capabilities('sample.bin')
 WHERE attack_id LIKE 'T1055%';            -- process-injection family
+
+-- 5. Combine relations: profile each executable section by joining sections()
+--    to disassemble() on address range (instruction/call counts next to entropy).
+SELECT s.name, round(s.entropy, 2) AS entropy, count(d.address) AS n_insns,
+       count(d.address) FILTER (WHERE list_contains(d.groups, 'call')) AS n_calls
+FROM sections('sample.bin') AS s
+LEFT JOIN disassemble('sample.bin') AS d
+  ON d.address >= s.vaddr AND d.address < s.vaddr + s.size
+WHERE s.exec
+GROUP BY s.name, s.vaddr, s.entropy
+ORDER BY s.vaddr;
 ```
 
 ## The disassembly model

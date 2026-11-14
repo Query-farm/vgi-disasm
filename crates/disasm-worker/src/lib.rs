@@ -29,6 +29,7 @@
 //! the input — disassembly is static decoding of bytes only.
 
 mod arrow_io;
+mod examples;
 mod meta;
 mod scalar;
 mod table;
@@ -176,6 +177,14 @@ fn catalog_metadata(name: &str) -> CatalogModel {
                          single column named value.",
                     ),
                     (
+                        "entry_function_length",
+                        "The arm64 Mach-O binary at the path 'test/sql/data/hello-macho-arm64' \
+                         (relative to the working directory) is a hello-world program. Starting at \
+                         its entry point, how many machine instructions does the entry function \
+                         contain, counting up to and including the first ret instruction at or \
+                         after the entry point? Return a single BIGINT column named n.",
+                    ),
+                    (
                         "supported_arch_list",
                         "Which architectures can this worker disassemble? List them alphabetically \
                          in a single column named arch.",
@@ -271,6 +280,9 @@ fn catalog_metadata(name: &str) -> CatalogModel {
                             "SELECT count(*) AS n FROM \
                              disasm.main.capabilities('powershell -enc ZQA='::BLOB)",
                         ),
+                        crate::examples::CAPABILITY_STRING_OFFSETS,
+                        crate::examples::SECTION_INSN_PROFILE,
+                        crate::examples::ENTRY_SECTION,
                     ]),
                 ),
             ],

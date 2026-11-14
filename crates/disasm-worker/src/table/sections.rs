@@ -82,23 +82,30 @@ impl TableFunction for Sections {
         tags.push(("vgi.executable_examples".into(), EXECUTABLE_EXAMPLES.into()));
         tags.push((
             "vgi.example_queries".into(),
-            crate::meta::example_queries_json(&[(
-                "Count the sections of a blob (a raw blob has none); pass a real binary as inline \
-                 bytes or a path to enumerate them.",
-                "SELECT count(*) AS n FROM disasm.main.sections('not a binary'::BLOB);",
-            )]),
+            crate::meta::example_queries_json(&[
+                (
+                    "Count the sections of a blob (a raw blob has none); pass a real binary as \
+                     inline bytes or a path to enumerate them.",
+                    "SELECT count(*) AS n FROM disasm.main.sections('not a binary'::BLOB);",
+                ),
+                crate::examples::SECTION_INSN_PROFILE,
+            ]),
         ));
         FunctionMetadata {
             description: "Enumerate the sections/segments of a binary (name, kind, vaddr, size, \
                           file_off, exec, entropy)"
                 .into(),
-            examples: vec![FunctionExample {
-                sql: "SELECT count(*) AS n FROM disasm.main.sections('not a binary'::BLOB);".into(),
-                description: "Count the sections of a blob (a raw blob has none). Pass a real \
-                              binary as inline BLOB bytes or a VARCHAR path to enumerate them."
-                    .into(),
-                expected_output: None,
-            }],
+            examples: vec![
+                FunctionExample {
+                    sql: "SELECT count(*) AS n FROM disasm.main.sections('not a binary'::BLOB);"
+                        .into(),
+                    description: "Count the sections of a blob (a raw blob has none). Pass a real \
+                                  binary as inline BLOB bytes or a VARCHAR path to enumerate them."
+                        .into(),
+                    expected_output: None,
+                },
+                crate::examples::function_example(crate::examples::SECTION_INSN_PROFILE),
+            ],
             tags,
             ..Default::default()
         }

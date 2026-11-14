@@ -15,12 +15,15 @@ use crate::arrow_io::const_input_bytes;
 use crate::table::{commented, input_arg};
 use disasm_core::Capability;
 
-const EXECUTABLE_EXAMPLES: &str = r#"[
-  {
-    "description": "A PowerShell -EncodedCommand string flags T1059.001.",
-    "sql": "SELECT attack_id FROM disasm.main.capabilities('powershell.exe -EncodedCommand ZQA='::BLOB) WHERE attack_id = 'T1059.001' LIMIT 1"
-  }
-]"#;
+/// Guaranteed-runnable examples (`vgi.executable_examples`): both are inline,
+/// offline, and deterministic.
+const EXECUTABLE_EXAMPLES: &[(&str, &str)] = &[
+    (
+        "A PowerShell -EncodedCommand string flags T1059.001.",
+        "SELECT attack_id FROM disasm.main.capabilities('powershell.exe -EncodedCommand ZQA='::BLOB) WHERE attack_id = 'T1059.001' LIMIT 1",
+    ),
+    crate::examples::CAPABILITY_STRING_OFFSETS,
+];
 
 pub struct Capabilities;
 
@@ -117,29 +120,38 @@ impl TableFunction for Capabilities {
                 ),
             ]),
         ));
-        tags.push(("vgi.executable_examples".into(), EXECUTABLE_EXAMPLES.into()));
+        tags.push((
+            "vgi.executable_examples".into(),
+            crate::meta::example_queries_json(EXECUTABLE_EXAMPLES),
+        ));
         tags.push((
             "vgi.example_queries".into(),
-            crate::meta::example_queries_json(&[(
-                "Surface ATT&CK-tagged capability indicators (rule, technique id, evidence) for a \
-                 suspicious command line.",
-                "SELECT rule, attack_id, evidence FROM \
-                 disasm.main.capabilities('powershell.exe -EncodedCommand ZQA='::BLOB);",
-            )]),
+            crate::meta::example_queries_json(&[
+                (
+                    "Surface ATT&CK-tagged capability indicators (rule, technique id, evidence) \
+                     for a suspicious command line.",
+                    "SELECT rule, attack_id, evidence FROM \
+                     disasm.main.capabilities('powershell.exe -EncodedCommand ZQA='::BLOB);",
+                ),
+                crate::examples::CAPABILITY_STRING_OFFSETS,
+            ]),
         ));
         FunctionMetadata {
             description: "Heuristic capability indicators mapped to MITRE ATT&CK (rule, \
                           attack_id, attack_name, severity, evidence) — not capa"
                 .into(),
-            examples: vec![FunctionExample {
-                sql: "SELECT rule, attack_id, evidence FROM \
-                      disasm.main.capabilities('powershell.exe -EncodedCommand ZQA='::BLOB);"
-                    .into(),
-                description: "Surface ATT&CK-tagged capability indicators for a blob; pass a \
-                              VARCHAR path to scan a file instead."
-                    .into(),
-                expected_output: None,
-            }],
+            examples: vec![
+                FunctionExample {
+                    sql: "SELECT rule, attack_id, evidence FROM \
+                          disasm.main.capabilities('powershell.exe -EncodedCommand ZQA='::BLOB);"
+                        .into(),
+                    description: "Surface ATT&CK-tagged capability indicators for a blob; pass a \
+                                  VARCHAR path to scan a file instead."
+                        .into(),
+                    expected_output: None,
+                },
+                crate::examples::function_example(crate::examples::CAPABILITY_STRING_OFFSETS),
+            ],
             tags,
             ..Default::default()
         }
