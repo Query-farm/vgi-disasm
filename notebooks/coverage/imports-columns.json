@@ -1,0 +1,45 @@
+{
+  "query": "DESCRIBE SELECT * FROM disasm.main.imports('assets/hello-macho-arm64.bin')",
+  "columns": [
+    "column_name",
+    "column_type",
+    "null",
+    "key",
+    "default",
+    "extra"
+  ],
+  "rows": [
+    [
+      "library",
+      "VARCHAR",
+      "YES",
+      null,
+      null,
+      null
+    ],
+    [
+      "name",
+      "VARCHAR",
+      "YES",
+      null,
+      null,
+      null
+    ],
+    [
+      "ordinal",
+      "INTEGER",
+      "YES",
+      null,
+      null,
+      null
+    ],
+    [
+      "kind",
+      "VARCHAR",
+      "YES",
+      null,
+      null,
+      null
+    ]
+  ]
+}

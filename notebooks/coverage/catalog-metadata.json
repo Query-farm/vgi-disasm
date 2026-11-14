@@ -1,0 +1,32 @@
+{
+  "query": "SELECT database_name,comment,tags,type,readonly FROM duckdb_databases() WHERE database_name='disasm'",
+  "columns": [
+    "database_name",
+    "comment",
+    "tags",
+    "type",
+    "readonly"
+  ],
+  "rows": [
+    [
+      "disasm",
+      "Disassemble PE/ELF/Mach-O binaries and shellcode into instruction rows, with section/import/string/capability triage for malware analysis.",
+      {
+        "vgi.agent_test_tasks": "[{\"name\":\"disassemble_shellcode_count\",\"prompt\":\"I have x64 shellcode as the hex string '554889e5c3'. Disassemble it and tell me how many machine instructions it contains. Return a single column named n.\"},{\"name\":\"find_ret_sites\",\"prompt\":\"In the x64 shellcode hex '554889e5c3', list the addresses of every return instruction, assuming it loads at address 4096. Return a single column named address.\"},{\"name\":\"probe_container\",\"prompt\":\"Is the blob with hex bytes '7f454c46' a recognized binary container, and which one? Return a single column named container.\"},{\"name\":\"powershell_capability\",\"prompt\":\"Does the text 'powershell.exe -EncodedCommand ZQA=' trip any MITRE ATT&CK capability heuristic? Return the distinct attack_id values in a column named attack_id.\"},{\"name\":\"entrypoint_raw_arch_null\",\"prompt\":\"The blob whose bytes are the text 'not a binary' is not a real executable. Resolve its entry point and tell me whether the resolved architecture is NULL. Return a single boolean column named arch_is_null.\"},{\"name\":\"sections_of_non_container\",\"prompt\":\"How many sections does the blob whose bytes are the text 'not a binary' contain? It is not a real container. Return a single column named n.\"},{\"name\":\"imports_present\",\"prompt\":\"Does the blob whose bytes are the text 'not a binary' import any symbols? Return a single boolean column named has_imports.\"},{\"name\":\"strings_extract_url\",\"prompt\":\"Extract the printable ASCII strings from the blob whose bytes are the text 'http://evil.example/c2'. Return them ordered alphabetically in a single column named value.\"},{\"name\":\"supported_arch_list\",\"prompt\":\"Which architectures can this worker disassemble? List them alphabetically in a single column named arch.\"}]",
+        "vgi.author": "Query.Farm",
+        "vgi.copyright": "Copyright 2026 Query Farm LLC - https://query.farm",
+        "vgi.doc_llm": "Disassemble the executable sections of PE/ELF/Mach-O binaries and raw shellcode into one row per machine instruction (address, bytes, mnemonic, operands, instruction groups) via Capstone, and surface section/import/string relations plus heuristic MITRE ATT&CK capability tags for malware triage. Pure in-engine static decoding over a `BLOB` \u2014 never executes the input, no network, no state.",
+        "vgi.doc_md": "# Disasm \u2014 Disassembly & Malware Triage in SQL\n\n**Disassemble PE/ELF/Mach-O binaries and raw shellcode directly in DuckDB SQL** \u2014 one instruction row per machine instruction, with section, import, string, and heuristic MITRE ATT&CK capability relations alongside. The `disasm` worker is driven by [Capstone](https://www.capstone-engine.org/) with container parsing by goblin, and is built for **fleet-scale, in-SQL triage**: disassemble and capability-tag thousands of samples and join the instruction stats and ATT&CK tags to the rest of your security tables \u2014 with no per-sample tooling and zero egress.\n\nIt pairs with `vgi-pe` (static PE/ELF/Mach-O metadata), `vgi-yara` (rule hits), and `vgi-ioc` (indicators) in a VGI security bundle. The worker is **pure static compute over the input `BLOB` \u2014 it never executes the sample**, making it safe for air-gapped / regulated malware repositories.\n\n**How it works.** You supply a sample as inline bytes or a filesystem path; the worker sniffs the container, resolves architecture and mode, statically decodes the executable sections, and tags heuristic behaviours against MITRE ATT&CK \u2014 all as ordinary SQL relations you can filter, aggregate, and join. Nothing is ever run or emulated. See the [source repository](https://github.com/Query-farm/vgi-disasm) for the full instruction/section/import/string/capability schema and licensing.",
+        "vgi.keywords": "[\"disassemble\",\"disassembly\",\"capstone\",\"instructions\",\"shellcode\",\"malware\",\"triage\",\"dfir\",\"sections\",\"imports\",\"strings\",\"capabilities\",\"mitre att&ck\",\"pe\",\"elf\",\"macho\",\"x86\",\"arm\"]",
+        "vgi.license": "MIT",
+        "vgi.subtitle": "Disassemble binaries and shellcode, then triage their sections, imports,                  strings, and MITRE ATT&CK capabilities.",
+        "vgi.support_contact": "https://github.com/Query-farm/vgi-disasm/issues",
+        "vgi.support_policy_url": "https://github.com/Query-farm/vgi-disasm/blob/main/README.md",
+        "vgi.title": "Disassembly & Malware Triage",
+        "vgi_resolved_implementation_version": "0.4.0"
+      },
+      "vgi",
+      false
+    ]
+  ]
+}

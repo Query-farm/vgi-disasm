@@ -1,0 +1,61 @@
+{
+  "query": "DESCRIBE SELECT * FROM disasm.main.disassemble('assets/hello-macho-arm64.bin')",
+  "columns": [
+    "column_name",
+    "column_type",
+    "null",
+    "key",
+    "default",
+    "extra"
+  ],
+  "rows": [
+    [
+      "address",
+      "UBIGINT",
+      "YES",
+      null,
+      null,
+      null
+    ],
+    [
+      "size",
+      "UTINYINT",
+      "YES",
+      null,
+      null,
+      null
+    ],
+    [
+      "bytes",
+      "BLOB",
+      "YES",
+      null,
+      null,
+      null
+    ],
+    [
+      "mnemonic",
+      "VARCHAR",
+      "YES",
+      null,
+      null,
+      null
+    ],
+    [
+      "op_str",
+      "VARCHAR",
+      "YES",
+      null,
+      null,
+      null
+    ],
+    [
+      "groups",
+      "VARCHAR[]",
+      "YES",
+      null,
+      null,
+      null
+    ]
+  ]
+}

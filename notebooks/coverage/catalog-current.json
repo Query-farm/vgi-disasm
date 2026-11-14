@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "repository": "Query-farm/vgi-disasm",
+  "revision": "cb7d007ae870f12ffc6350d8bdb7291ec1e97077",
+  "captured_at": "2026-11-14T19:41:01.891024+00:00",
+  "default_schema": "main",
+  "scope": "all_public_functions_and_tables",
+  "complete": true,
+  "evidence": [
+    {
+      "path": "coverage/functions-current.json",
+      "sha256": "9c5a30a52258202d9b00f5d18611f5f468945eb1c0e43fc015d08e8642dfdc8a",
+      "description": "Complete worker-filtered runtime export or full output-column DESCRIBE"
+    },
+    {
+      "path": "coverage/tables-current.json",
+      "sha256": "cbecc2b98bdc196e426044b335d46c4fe6fabe42250a89f4ae1bddf1261f7a39",
+      "description": "Complete worker-filtered runtime export or full output-column DESCRIBE"
+    },
+    {
+      "path": "coverage/views-current.json",
+      "sha256": "7b09e2143bd86b8aa39caa4f1015bac932006d29da7423441baa0e523272994f",
+      "description": "Complete worker-filtered runtime export or full output-column DESCRIBE"
+    },
+    {
+      "path": "coverage/arguments-current.json",
+      "sha256": "ef5894e33511c568e493572066ed7c2860bdc02441edb51d4531f0f65c4a942c",
+      "description": "Complete worker-filtered runtime export or full output-column DESCRIBE"
+    },
+    {
+      "path": "coverage/catalog-metadata-current.json",
+      "sha256": "7c478c6ab20f743b31d4fc0d46c1a8f9b240d1bb52fb6f2a18079619316017b0",
+      "description": "Complete worker-filtered runtime export or full output-column DESCRIBE"
+    },
+    {
+      "path": "coverage/view-columns-current.json",
+      "sha256": "26c45c45b4a5a7a16a23781c6906d640625991029fb1c670e4e8ca31150ea500",
+      "description": "Complete worker-filtered runtime export or full output-column DESCRIBE"
+    },
+    {
+      "path": "coverage/disassemble-columns-current.json",
+      "sha256": "721ba12ff307c3da6161d856bc98ecfc9037f336dfa8a25808c651141fe00321",
+      "description": "Complete worker-filtered runtime export or full output-column DESCRIBE"
+    },
+    {
+      "path": "coverage/sections-columns-current.json",
+      "sha256": "ade28afc50f6426f7153811a8c798040fa671f3793f90193e804da26b2e742f3",
+      "description": "Complete worker-filtered runtime export or full output-column DESCRIBE"
+    },
+    {
+      "path": "coverage/imports-columns-current.json",
+      "sha256": "97df4dca89888948fd1b0c600e1f14ed4994dc6c796251a5221b0213ecea8cc4",
+      "description": "Complete worker-filtered runtime export or full output-column DESCRIBE"
+    },
+    {
+      "path": "coverage/strings-columns-current.json",
+      "sha256": "5bfd428cf91fca6afea3e12a920f96401f7eb2b5a77924c84941c8984963c952",
+      "description": "Complete worker-filtered runtime export or full output-column DESCRIBE"
+    },
+    {
+      "path": "coverage/capabilities-columns-current.json",
+      "sha256": "b33315a400e33818e6871b58e3db5eec52eb0fec3112898203e3986a437f500b",
+      "description": "Complete worker-filtered runtime export or full output-column DESCRIBE"
+    },
+    {
+      "path": "coverage/source-compatibility.json",
+      "sha256": "16d7bff212c7afd5de9822c9e6354015e4a6c027cb1ccfde98cde0cfa45ef838",
+      "description": "Reviewed metadata-only main diff and existing green source CI"
+    }
+  ],
+  "objects": [
+    {
+      "schema": "main",
+      "name": "capabilities",
+      "kind": "function",
+      "signatures": [
+        "capabilities(blob ANY) -> TABLE(rule VARCHAR, attack_id VARCHAR, attack_name VARCHAR, severity VARCHAR, evidence VARCHAR)"
+      ],
+      "authentication": "none",
+      "access": "read"
+    },
+    {
+      "schema": "main",
+      "name": "disassemble",
+      "kind": "function",
+      "signatures": [
+        "disassemble(blob ANY, section VARCHAR, base UBIGINT, mode VARCHAR, arch VARCHAR) -> TABLE(address UBIGINT, size UTINYINT, bytes BLOB, mnemonic VARCHAR, op_str VARCHAR, groups VARCHAR[])"
+      ],
+      "authentication": "none",
+      "access": "read"
+    },
+    {
+      "schema": "main",
+      "name": "entrypoint",
+      "kind": "function",
+      "signatures": [
+        "entrypoint(blob ANY) -> STRUCT(arch VARCHAR, \"mode\" VARCHAR, vaddr UBIGINT, file_off UBIGINT, section VARCHAR)"
+      ],
+      "authentication": "none",
+      "access": "read"
+    },
+    {
+      "schema": "main",
+      "name": "format",
+      "kind": "function",
+      "signatures": [
+        "format(blob ANY) -> STRUCT(container VARCHAR, arch VARCHAR, \"mode\" VARCHAR, bits UTINYINT, endian VARCHAR, entry UBIGINT)"
+      ],
+      "authentication": "none",
+      "access": "read"
+    },
+    {
+      "schema": "main",
+      "name": "imports",
+      "kind": "function",
+      "signatures": [
+        "imports(blob ANY) -> TABLE(library VARCHAR, name VARCHAR, ordinal INTEGER, kind VARCHAR)"
+      ],
+      "authentication": "none",
+      "access": "read"
+    },
+    {
+      "schema": "main",
+      "name": "sections",
+      "kind": "function",
+      "signatures": [
+        "sections(blob ANY) -> TABLE(name VARCHAR, kind VARCHAR, vaddr UBIGINT, size UBIGINT, file_off UBIGINT, exec BOOLEAN, entropy DOUBLE)"
+      ],
+      "authentication": "none",
+      "access": "read"
+    },
+    {
+      "schema": "main",
+      "name": "strings",
+      "kind": "function",
+      "signatures": [
+        "strings(blob ANY, min_len UBIGINT) -> TABLE(offset UBIGINT, encoding VARCHAR, value VARCHAR)"
+      ],
+      "authentication": "none",
+      "access": "read"
+    },
+    {
+      "schema": "main",
+      "name": "supported_targets",
+      "kind": "table",
+      "signatures": [
+        "VIEW(arch VARCHAR, modes VARCHAR, description VARCHAR)"
+      ],
+      "authentication": "none",
+      "access": "read"
+    }
+  ],
+  "runtime": "Haybarn2.0.0rc11",
+  "launch": "Existing source-built native binary; artifact SHA256 in source-compatibility.json",
+  "review_notes": "Seven functions and one public view give eight logical surfaces. ANY accepts BLOB bytes or paths in one registration. All read local bytes or fixed vocabulary; no auth/write exclusions. Function and view columns and actual registrations reviewed."
+}

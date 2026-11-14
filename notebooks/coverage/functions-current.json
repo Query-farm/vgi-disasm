@@ -1,0 +1,303 @@
+{
+  "query": "SELECT * FROM duckdb_functions() WHERE database_name='disasm' ORDER BY schema_name,function_name,parameter_types",
+  "columns": [
+    "database_name",
+    "database_oid",
+    "schema_name",
+    "function_name",
+    "alias_of",
+    "function_type",
+    "description",
+    "comment",
+    "tags",
+    "return_type",
+    "parameters",
+    "parameter_types",
+    "varargs",
+    "macro_definition",
+    "has_side_effects",
+    "internal",
+    "extension_name",
+    "function_oid",
+    "examples",
+    "stability",
+    "categories"
+  ],
+  "rows": [
+    [
+      "disasm",
+      "22592",
+      "main",
+      "capabilities",
+      null,
+      "table",
+      "Heuristic capability indicators mapped to MITRE ATT&CK (rule, attack_id, attack_name, severity, evidence) \u2014 not capa",
+      null,
+      {
+        "vgi.category": "Malware Triage",
+        "vgi.doc_llm": "Surface lightweight, ATT&CK-tagged capability indicators for malware triage from three cheap signals: suspicious import names (e.g. VirtualAllocEx/WriteProcessMemory/CreateRemoteThread \u2192 T1055 Process Injection), interesting strings (PowerShell -enc, cmd.exe /c, autorun registry paths, VM-artifact names, ransom-note markers), and anti-analysis instruction patterns (rdtsc/cpuid timing, int3 / int 0x2d). One row per match with rule, attack_id, attack_name, severity (advisory only), and the matched evidence. This is a deliberate heuristic over curated reference tables \u2014 it is NOT a port of capa's rule engine. Input may be inline `BLOB` bytes or a `VARCHAR` path.",
+        "vgi.doc_md": "Lightweight, [MITRE ATT&CK](https://attack.mitre.org/techniques/)-tagged capability indicators for malware triage (`rule`, `attack_id`, `attack_name`, `severity`, `evidence`), matched from three cheap signals \u2014 suspicious import names, interesting strings, and anti-analysis instruction patterns. A deliberate heuristic over curated reference tables; **not** a port of capa's rule engine.",
+        "vgi.example_queries": "[{\"description\":\"Surface ATT&CK-tagged capability indicators (rule, technique id, evidence) for a suspicious command line.\",\"sql\":\"SELECT rule, attack_id, evidence FROM disasm.main.capabilities('powershell.exe -EncodedCommand ZQA='::BLOB);\"},{\"description\":\"Locate each string-based ATT&CK indicator in a sample: join capabilities() to strings() on the matched evidence to get the file offset of every flagged string (offsets 0, 18 and 56 here).\",\"sql\":\"SELECT c.rule, c.attack_id, c.severity, s.\\\"offset\\\", s.value FROM disasm.main.capabilities('cmd.exe /c whoami\\\\x00schtasks /create /tn upd /tr evil.exe\\\\x00http://evil.example/c2'::BLOB) AS c JOIN disasm.main.strings('cmd.exe /c whoami\\\\x00schtasks /create /tn upd /tr evil.exe\\\\x00http://evil.example/c2'::BLOB) AS s ON s.value = c.evidence ORDER BY s.\\\"offset\\\", c.rule;\"}]",
+        "vgi.executable_examples": "[{\"description\":\"A PowerShell -EncodedCommand string flags T1059.001.\",\"sql\":\"SELECT attack_id FROM disasm.main.capabilities('powershell.exe -EncodedCommand ZQA='::BLOB) WHERE attack_id = 'T1059.001' LIMIT 1\"},{\"description\":\"Locate each string-based ATT&CK indicator in a sample: join capabilities() to strings() on the matched evidence to get the file offset of every flagged string (offsets 0, 18 and 56 here).\",\"sql\":\"SELECT c.rule, c.attack_id, c.severity, s.\\\"offset\\\", s.value FROM disasm.main.capabilities('cmd.exe /c whoami\\\\x00schtasks /create /tn upd /tr evil.exe\\\\x00http://evil.example/c2'::BLOB) AS c JOIN disasm.main.strings('cmd.exe /c whoami\\\\x00schtasks /create /tn upd /tr evil.exe\\\\x00http://evil.example/c2'::BLOB) AS s ON s.value = c.evidence ORDER BY s.\\\"offset\\\", c.rule;\"}]",
+        "vgi.keywords": "[\"capabilities\",\"mitre\",\"att&ck\",\"attack\",\"heuristic\",\"malware\",\"triage\",\"process injection\",\"ransomware\",\"anti-debug\",\"anti-vm\"]",
+        "vgi.result_columns_schema": "[{\"name\":\"rule\",\"type\":\"VARCHAR\",\"description\":\"Short heuristic name, e.g. 'inject:CreateRemoteThread'.\"},{\"name\":\"attack_id\",\"type\":\"VARCHAR\",\"description\":\"MITRE ATT&CK technique id, e.g. 'T1055.002'.\"},{\"name\":\"attack_name\",\"type\":\"VARCHAR\",\"description\":\"MITRE ATT&CK technique name.\"},{\"name\":\"severity\",\"type\":\"VARCHAR\",\"description\":\"Advisory severity: info, low, medium, or high.\"},{\"name\":\"evidence\",\"type\":\"VARCHAR\",\"description\":\"The import name, string, or instruction that matched.\"}]",
+        "vgi.title": "Heuristic ATT&CK Capabilities"
+      },
+      null,
+      [
+        "blob"
+      ],
+      [
+        "ANY"
+      ],
+      null,
+      null,
+      null,
+      true,
+      null,
+      22598,
+      [
+        "SELECT rule, attack_id, evidence FROM disasm.main.capabilities('powershell.exe -EncodedCommand ZQA='::BLOB);",
+        "SELECT c.rule, c.attack_id, c.severity, s.\"offset\", s.value FROM disasm.main.capabilities('cmd.exe /c whoami\\x00schtasks /create /tn upd /tr evil.exe\\x00http://evil.example/c2'::BLOB) AS c JOIN disasm.main.strings('cmd.exe /c whoami\\x00schtasks /create /tn upd /tr evil.exe\\x00http://evil.example/c2'::BLOB) AS s ON s.value = c.evidence ORDER BY s.\"offset\", c.rule;"
+      ],
+      null,
+      []
+    ],
+    [
+      "disasm",
+      "22592",
+      "main",
+      "disassemble",
+      null,
+      "table",
+      "Disassemble a binary or shellcode blob into one row per machine instruction (address, size, bytes, mnemonic, op_str, groups)",
+      null,
+      {
+        "vgi.category": "Disassembly",
+        "vgi.doc_llm": "Disassemble the executable sections of a PE/ELF/Mach-O binary \u2014 or a raw shellcode blob \u2014 into one row per machine instruction via Capstone. Arch/mode auto-detect from the container, or pass arch (x86, arm, arm64, mips, ppc, sysz, riscv) and mode (x16, x32, x64, arm, thumb, big, little) explicitly (required for raw blobs). base seeds the address column and makes branch targets print absolute; section selects auto (every executable section), all (the whole blob as raw bytes), or a section name. Each row carries address, size, bytes, mnemonic, op_str, and a normalized groups `LIST<VARCHAR>` (call/jump/ret/int/privileged/branch_relative/fpu/sse/vm). Output is address-ordered and bounded; undecodable bytes become '.byte' rows so the sweep never stalls. The input is statically decoded, never executed.",
+        "vgi.doc_md": "Disassemble a binary or shellcode into instruction rows (`address`, `size`, `bytes`, `mnemonic`, `op_str`, `groups`) via [Capstone](https://www.capstone-engine.org/). Arch/mode auto-detect from a PE/ELF/Mach-O container, or pass `arch` / `mode` explicitly (required for raw shellcode). v1 uses a **linear sweep** from the start of each selected section \u2014 simple and deterministic, but it can mis-decode data interleaved in code; undecodable bytes become `.byte` rows and the sweep resumes, so it never stalls. Supported arches: x86 (16/32/64), arm, arm64, mips, ppc, sysz, riscv.",
+        "vgi.example_queries": "[{\"description\":\"Disassemble a tiny x64 shellcode blob and project the instruction address, mnemonic, and operands.\",\"sql\":\"SELECT address, mnemonic, op_str FROM disasm.main.disassemble(from_hex('554889e5c3'), arch := 'x86', mode := 'x64');\"}]",
+        "vgi.executable_examples": "[\n  {\n    \"description\": \"Disassemble x64 shellcode at an explicit base (0x1000); list its return sites.\",\n    \"sql\": \"SELECT address, mnemonic, op_str FROM disasm.main.disassemble(from_hex('554889e5c3'), arch := 'x86', mode := 'x64', base := 4096) WHERE list_contains(groups, 'ret')\"\n  },\n  {\n    \"description\": \"Count decoded instructions in a raw x64 nop sled.\",\n    \"sql\": \"SELECT count(*) AS n FROM disasm.main.disassemble(from_hex('90909090'), arch := 'x86', mode := 'x64')\"\n  }\n]",
+        "vgi.keywords": "[\"disassemble\",\"disassembly\",\"capstone\",\"instructions\",\"opcodes\",\"mnemonic\",\"shellcode\",\"malware\",\"triage\",\"x86\",\"arm\",\"linear sweep\"]",
+        "vgi.result_columns_schema": "[{\"name\":\"address\",\"type\":\"UBIGINT\",\"description\":\"Absolute virtual address of the instruction (base + offset).\"},{\"name\":\"size\",\"type\":\"UTINYINT\",\"description\":\"Instruction length in bytes (0 only for the synthetic error row).\"},{\"name\":\"bytes\",\"type\":\"BLOB\",\"description\":\"The raw machine bytes of this instruction.\"},{\"name\":\"mnemonic\",\"type\":\"VARCHAR\",\"description\":\"Instruction mnemonic, e.g. 'mov', 'call', 'bl'; '.byte' for an undecodable byte.\"},{\"name\":\"op_str\",\"type\":\"VARCHAR\",\"description\":\"Operand text, e.g. 'rax, qword ptr [rip + 0x2f1a]'.\"},{\"name\":\"groups\",\"type\":\"VARCHAR[]\",\"description\":\"Normalized instruction groups (call, jump, ret, int, privileged, branch_relative, fpu, sse, vm) for SQL filtering.\"}]",
+        "vgi.title": "Disassemble Into Instruction Rows"
+      },
+      null,
+      [
+        "blob",
+        "section",
+        "base",
+        "mode",
+        "arch"
+      ],
+      [
+        "ANY",
+        "VARCHAR",
+        "UBIGINT",
+        "VARCHAR",
+        "VARCHAR"
+      ],
+      null,
+      null,
+      null,
+      true,
+      null,
+      22599,
+      [
+        "SELECT address, mnemonic, op_str FROM disasm.main.disassemble(from_hex('554889e5c3'), arch := 'x86', mode := 'x64');"
+      ],
+      null,
+      []
+    ],
+    [
+      "disasm",
+      "22592",
+      "main",
+      "entrypoint",
+      null,
+      "scalar",
+      "The container entry point and resolved (arch, mode): STRUCT(arch, mode, vaddr, file_off, section)",
+      null,
+      {
+        "vgi.category": "Container Probe",
+        "vgi.doc_llm": "Resolve the container entry point and the (arch, mode) it implies: returns a `STRUCT(arch, mode, vaddr, file_off, section)`. vaddr is the entry virtual address, file_off its file offset, and section the section that contains it. For a Mach-O fat binary the primary (first) slice is reported. A raw blob returns NULL struct fields. Input may be inline `BLOB` bytes or a `VARCHAR` path.",
+        "vgi.doc_md": "Resolve a binary's entry point \u2014 `STRUCT(arch, mode, vaddr, file_off, section)`. NULL fields for a raw blob.",
+        "vgi.example_queries": "[{\"description\":\"Resolve a blob's entry point; a raw blob yields NULL fields.\",\"sql\":\"SELECT (disasm.main.entrypoint('not a binary'::BLOB)).arch AS arch;\"},{\"description\":\"Check where a binary starts executing: join entrypoint() to sections() on the entry's section name to report that section's kind, exec flag and entropy (an entry point in a non-code or near-8-bit-entropy section suggests a packer; the fixture's entry is in __TEXT,__text, kind code).\",\"sql\":\"SELECT ep.e.section, ep.e.vaddr AS entry_vaddr, s.kind, s.exec, round(s.entropy, 2) AS entropy FROM (SELECT disasm.main.entrypoint('test/sql/data/hello-macho-arm64') AS e) AS ep JOIN disasm.main.sections('test/sql/data/hello-macho-arm64') AS s ON s.name = ep.e.section ORDER BY s.vaddr;\"}]",
+        "vgi.keywords": "[\"entrypoint\",\"entry point\",\"entry\",\"start address\",\"vaddr\",\"arch\",\"mode\",\"section\"]",
+        "vgi.title": "Resolve Entry Point"
+      },
+      "STRUCT(arch VARCHAR, \"mode\" VARCHAR, vaddr UBIGINT, file_off UBIGINT, section VARCHAR)",
+      [
+        "blob"
+      ],
+      [
+        "ANY"
+      ],
+      null,
+      null,
+      false,
+      true,
+      null,
+      22596,
+      [
+        "SELECT (disasm.main.entrypoint('not a binary'::BLOB)).arch AS arch;",
+        "SELECT ep.e.section, ep.e.vaddr AS entry_vaddr, s.kind, s.exec, round(s.entropy, 2) AS entropy FROM (SELECT disasm.main.entrypoint('test/sql/data/hello-macho-arm64') AS e) AS ep JOIN disasm.main.sections('test/sql/data/hello-macho-arm64') AS s ON s.name = ep.e.section ORDER BY s.vaddr;"
+      ],
+      "CONSISTENT",
+      []
+    ],
+    [
+      "disasm",
+      "22592",
+      "main",
+      "format",
+      null,
+      "scalar",
+      "Probe a blob's container/arch without disassembling: STRUCT(container, arch, mode, bits, endian, entry)",
+      null,
+      {
+        "vgi.category": "Container Probe",
+        "vgi.doc_llm": "Cheaply probe a blob's container and architecture WITHOUT disassembling: returns a `STRUCT(container, arch, mode, bits, endian, entry)`. container is one of pe, elf, macho, fat-macho, or raw. The fast pre-filter for 'is this even a binary I can disassemble' across a large scan. Input may be inline `BLOB` bytes or a `VARCHAR` path. A raw/unrecognized blob returns container='raw' with NULL detail fields.",
+        "vgi.doc_md": "Probe a blob's container/arch without disassembling \u2014 `STRUCT(container, arch, mode, bits, endian, entry)`.",
+        "vgi.example_queries": "[{\"description\":\"Probe the ELF magic and report the detected container type.\",\"sql\":\"SELECT (disasm.main.format(from_hex('7f454c46'))).container AS container;\"}]",
+        "vgi.keywords": "[\"format\",\"container\",\"probe\",\"magic\",\"pe\",\"elf\",\"macho\",\"fat\",\"arch detect\",\"bitness\",\"endianness\",\"is binary\"]",
+        "vgi.title": "Probe Binary Format"
+      },
+      "STRUCT(container VARCHAR, arch VARCHAR, \"mode\" VARCHAR, bits UTINYINT, endian VARCHAR, entry UBIGINT)",
+      [
+        "blob"
+      ],
+      [
+        "ANY"
+      ],
+      null,
+      null,
+      false,
+      true,
+      null,
+      22597,
+      [
+        "SELECT (disasm.main.format(from_hex('7f454c46'))).container AS container;"
+      ],
+      "CONSISTENT",
+      []
+    ],
+    [
+      "disasm",
+      "22592",
+      "main",
+      "imports",
+      null,
+      "table",
+      "Enumerate the imported symbols of a binary (library, name, ordinal, kind)",
+      null,
+      {
+        "vgi.category": "Static Extraction",
+        "vgi.doc_llm": "Enumerate the imported symbols of a PE/ELF/Mach-O binary: PE import directory (including ordinal-only imports, name NULL then), ELF dynamic-symbol imports, and Mach-O bind/lazy imports. One row per import with library, name, ordinal, and kind (named, ordinal, delayed). This is the input to the import-name capability heuristics and a join key to vgi-pe. A raw blob yields zero rows. Input may be inline `BLOB` bytes or a `VARCHAR` path.",
+        "vgi.doc_md": "Enumerate a binary's imported symbols (`library`, `name`, `ordinal`, `kind`) across PE (import directory, including ordinal-only entries where `name` is NULL), ELF (dynamic-symbol imports), and Mach-O (bind/lazy). The input to the import-name capability heuristics and a join key to `vgi-pe`. A raw blob yields zero rows.",
+        "vgi.example_queries": "[{\"description\":\"Count the imported symbols of a blob (a raw blob has none); pass a real binary as inline bytes or a path to list them.\",\"sql\":\"SELECT count(*) AS n FROM disasm.main.imports('not a binary'::BLOB);\"}]",
+        "vgi.executable_examples": "[\n  {\n    \"description\": \"A raw (non-container) blob has no imports.\",\n    \"sql\": \"SELECT count(*) AS n FROM disasm.main.imports('not a binary')\"\n  }\n]",
+        "vgi.keywords": "[\"imports\",\"iat\",\"import table\",\"symbols\",\"dll\",\"dylib\",\"api\",\"malware\",\"pe\",\"elf\",\"macho\"]",
+        "vgi.result_columns_schema": "[{\"name\":\"library\",\"type\":\"VARCHAR\",\"description\":\"Importing library/DLL/dylib name, or NULL when the container does not attribute the symbol to one (typical for ELF).\"},{\"name\":\"name\",\"type\":\"VARCHAR\",\"description\":\"Imported symbol name, or NULL for an ordinal-only PE import.\"},{\"name\":\"ordinal\",\"type\":\"INTEGER\",\"description\":\"Import ordinal (PE), or NULL.\"},{\"name\":\"kind\",\"type\":\"VARCHAR\",\"description\":\"Import kind: named, ordinal, or delayed.\"}]",
+        "vgi.title": "Enumerate Imported Symbols"
+      },
+      null,
+      [
+        "blob"
+      ],
+      [
+        "ANY"
+      ],
+      null,
+      null,
+      null,
+      true,
+      null,
+      22600,
+      [
+        "SELECT count(*) AS n FROM disasm.main.imports('not a binary'::BLOB);"
+      ],
+      null,
+      []
+    ],
+    [
+      "disasm",
+      "22592",
+      "main",
+      "sections",
+      null,
+      "table",
+      "Enumerate the sections/segments of a binary (name, kind, vaddr, size, file_off, exec, entropy)",
+      null,
+      {
+        "vgi.category": "Static Extraction",
+        "vgi.doc_llm": "Enumerate the sections/segments of a PE/ELF/Mach-O binary via goblin: one row per section with name, kind (code/data/rodata/bss/debug/other), vaddr, size, file_off, an exec flag (the executable sections disassemble(section:='auto') sweeps), and Shannon entropy over the section bytes (a packed/encrypted-section flag). A raw blob yields zero rows. Input may be inline `BLOB` bytes or a `VARCHAR` path.",
+        "vgi.doc_md": "Enumerate the sections/segments of a [PE](https://learn.microsoft.com/windows/win32/debug/pe-format) / [ELF](https://refspecs.linuxfoundation.org/elf/elf.pdf) / Mach-O binary (`name`, `kind`, `vaddr`, `size`, `file_off`, `exec`, `entropy`). `exec` marks the executable sections that `disassemble(section := 'auto')` sweeps; high `entropy` (near 8 bits/byte) flags a packed or encrypted section. A raw (non-container) blob yields zero rows.",
+        "vgi.example_queries": "[{\"description\":\"Count the sections of a blob (a raw blob has none); pass a real binary as inline bytes or a path to enumerate them.\",\"sql\":\"SELECT count(*) AS n FROM disasm.main.sections('not a binary'::BLOB);\"},{\"description\":\"Profile every executable section of a binary: join sections() to disassemble() by address range to count decoded instructions and calls per section next to its entropy (the hello-world Mach-O fixture: __text 8 instructions / 1 call, __stubs 3, __stub_helper 9).\",\"sql\":\"SELECT s.name, round(s.entropy, 2) AS entropy, count(d.address) AS n_insns, count(d.address) FILTER (WHERE list_contains(d.groups, 'call')) AS n_calls FROM disasm.main.sections('test/sql/data/hello-macho-arm64') AS s LEFT JOIN disasm.main.disassemble('test/sql/data/hello-macho-arm64') AS d ON d.address >= s.vaddr AND d.address < s.vaddr + s.size WHERE s.exec GROUP BY s.name, s.vaddr, s.entropy ORDER BY s.vaddr;\"}]",
+        "vgi.executable_examples": "[\n  {\n    \"description\": \"A raw (non-container) blob has no sections.\",\n    \"sql\": \"SELECT count(*) AS n FROM disasm.main.sections('not a binary')\"\n  }\n]",
+        "vgi.keywords": "[\"sections\",\"segments\",\"pe\",\"elf\",\"macho\",\"entropy\",\"packed\",\"executable\",\"vaddr\",\"code section\"]",
+        "vgi.result_columns_schema": "[{\"name\":\"name\",\"type\":\"VARCHAR\",\"description\":\"Section/segment name, e.g. '.text' or '__TEXT,__text'.\"},{\"name\":\"kind\",\"type\":\"VARCHAR\",\"description\":\"Section class: code, data, rodata, bss, debug, or other.\"},{\"name\":\"vaddr\",\"type\":\"UBIGINT\",\"description\":\"Virtual address of the section (absolute; PE adds image base).\"},{\"name\":\"size\",\"type\":\"UBIGINT\",\"description\":\"Declared section size in bytes (virtual size).\"},{\"name\":\"file_off\",\"type\":\"UBIGINT\",\"description\":\"File offset of the section's bytes.\"},{\"name\":\"exec\",\"type\":\"BOOLEAN\",\"description\":\"True if the section is executable (the disassemble(section := 'auto') set).\"},{\"name\":\"entropy\",\"type\":\"DOUBLE\",\"description\":\"Shannon entropy (bits/byte, 0..8) over the section's file bytes; high values flag packing/encryption.\"}]",
+        "vgi.title": "Enumerate Sections / Segments"
+      },
+      null,
+      [
+        "blob"
+      ],
+      [
+        "ANY"
+      ],
+      null,
+      null,
+      null,
+      true,
+      null,
+      22601,
+      [
+        "SELECT count(*) AS n FROM disasm.main.sections('not a binary'::BLOB);",
+        "SELECT s.name, round(s.entropy, 2) AS entropy, count(d.address) AS n_insns, count(d.address) FILTER (WHERE list_contains(d.groups, 'call')) AS n_calls FROM disasm.main.sections('test/sql/data/hello-macho-arm64') AS s LEFT JOIN disasm.main.disassemble('test/sql/data/hello-macho-arm64') AS d ON d.address >= s.vaddr AND d.address < s.vaddr + s.size WHERE s.exec GROUP BY s.name, s.vaddr, s.entropy ORDER BY s.vaddr;"
+      ],
+      null,
+      []
+    ],
+    [
+      "disasm",
+      "22592",
+      "main",
+      "strings",
+      null,
+      "table",
+      "Extract printable ASCII and UTF-16LE strings from a blob (offset, encoding, value)",
+      null,
+      {
+        "vgi.category": "Static Extraction",
+        "vgi.doc_llm": "Classic strings-style extraction: runs of printable ASCII and UTF-16LE of length \u2265 min_len (default 4), each with its file offset and encoding (ascii or utf16le). Feeds the string\u2192indicator capability heuristics and is independently useful for triage. Output count is bounded. Input may be inline `BLOB` bytes or a `VARCHAR` path.",
+        "vgi.doc_md": "Classic `strings`-style extraction of printable ASCII and UTF-16LE runs of length \u2265 `min_len` (default 4), each with its file `offset` and `encoding`. Feeds the string\u2192indicator capability heuristics and is independently useful for triage; the output count and per-string length are bounded.",
+        "vgi.example_queries": "[{\"description\":\"Extract printable strings (length \u2265 6) from a blob, ordered by file offset.\",\"sql\":\"SELECT \\\"offset\\\", encoding, value FROM disasm.main.strings('cmd.exe /c whoami'::BLOB, min_len := 6) ORDER BY \\\"offset\\\";\"}]",
+        "vgi.executable_examples": "[\n  {\n    \"description\": \"Extract ASCII strings (min length 4) from an inline blob.\",\n    \"sql\": \"SELECT value FROM disasm.main.strings('hello world embedded text'::BLOB) WHERE encoding = 'ascii' ORDER BY \\\"offset\\\" LIMIT 1\"\n  }\n]",
+        "vgi.keywords": "[\"strings\",\"ascii\",\"utf16\",\"extract strings\",\"ioc\",\"triage\",\"printable\",\"offset\"]",
+        "vgi.result_columns_schema": "[{\"name\":\"offset\",\"type\":\"UBIGINT\",\"description\":\"File offset of the first byte of the string run.\"},{\"name\":\"encoding\",\"type\":\"VARCHAR\",\"description\":\"Encoding of the run: ascii or utf16le.\"},{\"name\":\"value\",\"type\":\"VARCHAR\",\"description\":\"The decoded printable string (truncated to a bounded length).\"}]",
+        "vgi.title": "Extract Printable Strings"
+      },
+      null,
+      [
+        "blob",
+        "min_len"
+      ],
+      [
+        "ANY",
+        "UBIGINT"
+      ],
+      null,
+      null,
+      null,
+      true,
+      null,
+      22602,
+      [
+        "SELECT \"offset\", encoding, value FROM disasm.main.strings('cmd.exe /c whoami'::BLOB, min_len := 6) ORDER BY \"offset\";"
+      ],
+      null,
+      []
+    ]
+  ]
+}

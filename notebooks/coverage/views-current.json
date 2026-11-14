@@ -1,0 +1,44 @@
+{
+  "query": "SELECT * FROM duckdb_views() WHERE database_name='disasm' ORDER BY schema_name,view_name",
+  "columns": [
+    "database_name",
+    "database_oid",
+    "schema_name",
+    "schema_oid",
+    "view_name",
+    "view_oid",
+    "comment",
+    "tags",
+    "internal",
+    "temporary",
+    "column_count",
+    "sql",
+    "is_bound"
+  ],
+  "rows": [
+    [
+      "disasm",
+      22592,
+      "main",
+      22794,
+      "supported_targets",
+      22795,
+      "The architecture / decode-mode tokens disassemble() accepts \u2014 browse it to discover valid arch / mode values without supplying a binary.",
+      {
+        "domain": "security",
+        "topic": "disassembly",
+        "vgi.category": "Utility",
+        "vgi.doc_llm": "The fixed vocabulary of architecture and decode-mode tokens the disassemble() function accepts, one row per architecture. Each row lists the arch token to pass, the valid mode tokens for it, and a short note on when to set mode. Browse it (a plain no-argument scan) to learn what to put in disassemble()'s arch / mode arguments before you have a sample in hand. It takes no arguments and always returns the same seven rows.",
+        "vgi.doc_md": "A no-arguments reference of the architecture / decode-mode tokens `disassemble()` accepts (`arch`, `modes`, `description`) \u2014 one row per architecture. Browse `disasm.main.supported_targets` to discover valid `arch` / `mode` values (e.g. `x86` with mode `x64`, or `arm` with mode `thumb`) without needing a binary first.",
+        "vgi.example_queries": "[{\"description\":\"List every architecture the disassemble() function accepts and the mode tokens valid for each.\",\"sql\":\"SELECT arch, modes FROM disasm.main.supported_targets ORDER BY arch;\"}]",
+        "vgi.keywords": "[\"supported\",\"architectures\",\"arch\",\"mode\",\"targets\",\"reference\",\"capstone\",\"x86\",\"arm\",\"browsable\"]",
+        "vgi.title": "Supported Disassembly Targets"
+      },
+      false,
+      false,
+      null,
+      "CREATE VIEW supported_targets AS SELECT * FROM (SELECT * FROM (VALUES ('x86', 'x16, x32, x64', 'Intel x86; pass mode to choose the register width (default x64).'), ('arm', 'arm, thumb', 'Little-endian 32-bit ARM; pass mode := ''thumb'' for the Thumb (T32) instruction set.'), ('arm64', 'little, big', '64-bit ARM (AArch64); little-endian unless mode := ''big''.'), ('mips', 'little, big', 'MIPS; pass mode := ''big'' for big-endian targets.'), ('ppc', 'little, big', 'PowerPC; pass mode := ''big'' for big-endian targets.'), ('sysz', 'big', 'IBM System/390 (s390x); always decoded big-endian.'), ('riscv', 'little, big', '64-bit RISC-V.')) AS valueslist) AS t(arch, modes, description);",
+      false
+    ]
+  ]
+}

@@ -1,0 +1,592 @@
+{
+  "schema_version": 1,
+  "status": "met",
+  "meets_target": true,
+  "catalogs": {
+    "released": {
+      "catalog_status": "verified",
+      "revision": "v0.4.0",
+      "catalog_sha256": "89e12dc5e3dc05f52bfd13d57a40cfa384f96cc09bc59b44e27044e7473d4875",
+      "collection_reconciled": true,
+      "denominator": 8,
+      "observed_objects": 8,
+      "required": 8,
+      "verified_count": 8,
+      "candidate_count": 0,
+      "fraction": 1.0,
+      "meets_target": true,
+      "exact_runtime_count": 8,
+      "runtime_revisions": [
+        "v0.4.0"
+      ],
+      "covered": [
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "capabilities"
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "disassemble"
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "entrypoint"
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "format"
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "imports"
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "sections"
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "strings"
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "supported_targets"
+        }
+      ],
+      "uncovered": [],
+      "objects": [
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "capabilities",
+          "kinds": [
+            "function"
+          ],
+          "signatures": [
+            "capabilities(blob ANY) -> TABLE(rule VARCHAR, attack_id VARCHAR, attack_name VARCHAR, severity VARCHAR, evidence VARCHAR)"
+          ],
+          "access": [
+            "read"
+          ],
+          "authentication": [
+            "none"
+          ]
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "disassemble",
+          "kinds": [
+            "function"
+          ],
+          "signatures": [
+            "disassemble(blob ANY, section VARCHAR, base UBIGINT, mode VARCHAR, arch VARCHAR) -> TABLE(address UBIGINT, size UTINYINT, bytes BLOB, mnemonic VARCHAR, op_str VARCHAR, groups VARCHAR[])"
+          ],
+          "access": [
+            "read"
+          ],
+          "authentication": [
+            "none"
+          ]
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "entrypoint",
+          "kinds": [
+            "function"
+          ],
+          "signatures": [
+            "entrypoint(blob ANY) -> STRUCT(arch VARCHAR, \"mode\" VARCHAR, vaddr UBIGINT, file_off UBIGINT, section VARCHAR)"
+          ],
+          "access": [
+            "read"
+          ],
+          "authentication": [
+            "none"
+          ]
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "format",
+          "kinds": [
+            "function"
+          ],
+          "signatures": [
+            "format(blob ANY) -> STRUCT(container VARCHAR, arch VARCHAR, \"mode\" VARCHAR, bits UTINYINT, endian VARCHAR, entry UBIGINT)"
+          ],
+          "access": [
+            "read"
+          ],
+          "authentication": [
+            "none"
+          ]
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "imports",
+          "kinds": [
+            "function"
+          ],
+          "signatures": [
+            "imports(blob ANY) -> TABLE(library VARCHAR, name VARCHAR, ordinal INTEGER, kind VARCHAR)"
+          ],
+          "access": [
+            "read"
+          ],
+          "authentication": [
+            "none"
+          ]
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "sections",
+          "kinds": [
+            "function"
+          ],
+          "signatures": [
+            "sections(blob ANY) -> TABLE(name VARCHAR, kind VARCHAR, vaddr UBIGINT, size UBIGINT, file_off UBIGINT, exec BOOLEAN, entropy DOUBLE)"
+          ],
+          "access": [
+            "read"
+          ],
+          "authentication": [
+            "none"
+          ]
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "strings",
+          "kinds": [
+            "function"
+          ],
+          "signatures": [
+            "strings(blob ANY, min_len UBIGINT) -> TABLE(offset UBIGINT, encoding VARCHAR, value VARCHAR)"
+          ],
+          "access": [
+            "read"
+          ],
+          "authentication": [
+            "none"
+          ]
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "supported_targets",
+          "kinds": [
+            "table"
+          ],
+          "signatures": [
+            "VIEW(arch VARCHAR, modes VARCHAR, description VARCHAR)"
+          ],
+          "access": [
+            "read"
+          ],
+          "authentication": [
+            "none"
+          ]
+        }
+      ],
+      "issues": []
+    },
+    "current": {
+      "catalog_status": "verified",
+      "revision": "cb7d007ae870f12ffc6350d8bdb7291ec1e97077",
+      "catalog_sha256": "a0de89b955d80f00112c4a41a747b559c61b82ab1df09c98f50914392951208e",
+      "collection_reconciled": true,
+      "denominator": 8,
+      "observed_objects": 8,
+      "required": 8,
+      "verified_count": 8,
+      "candidate_count": 0,
+      "fraction": 1.0,
+      "meets_target": true,
+      "exact_runtime_count": 0,
+      "runtime_revisions": [
+        "v0.4.0"
+      ],
+      "covered": [
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "capabilities"
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "disassemble"
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "entrypoint"
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "format"
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "imports"
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "sections"
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "strings"
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "supported_targets"
+        }
+      ],
+      "uncovered": [],
+      "objects": [
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "capabilities",
+          "kinds": [
+            "function"
+          ],
+          "signatures": [
+            "capabilities(blob ANY) -> TABLE(rule VARCHAR, attack_id VARCHAR, attack_name VARCHAR, severity VARCHAR, evidence VARCHAR)"
+          ],
+          "access": [
+            "read"
+          ],
+          "authentication": [
+            "none"
+          ]
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "disassemble",
+          "kinds": [
+            "function"
+          ],
+          "signatures": [
+            "disassemble(blob ANY, section VARCHAR, base UBIGINT, mode VARCHAR, arch VARCHAR) -> TABLE(address UBIGINT, size UTINYINT, bytes BLOB, mnemonic VARCHAR, op_str VARCHAR, groups VARCHAR[])"
+          ],
+          "access": [
+            "read"
+          ],
+          "authentication": [
+            "none"
+          ]
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "entrypoint",
+          "kinds": [
+            "function"
+          ],
+          "signatures": [
+            "entrypoint(blob ANY) -> STRUCT(arch VARCHAR, \"mode\" VARCHAR, vaddr UBIGINT, file_off UBIGINT, section VARCHAR)"
+          ],
+          "access": [
+            "read"
+          ],
+          "authentication": [
+            "none"
+          ]
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "format",
+          "kinds": [
+            "function"
+          ],
+          "signatures": [
+            "format(blob ANY) -> STRUCT(container VARCHAR, arch VARCHAR, \"mode\" VARCHAR, bits UTINYINT, endian VARCHAR, entry UBIGINT)"
+          ],
+          "access": [
+            "read"
+          ],
+          "authentication": [
+            "none"
+          ]
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "imports",
+          "kinds": [
+            "function"
+          ],
+          "signatures": [
+            "imports(blob ANY) -> TABLE(library VARCHAR, name VARCHAR, ordinal INTEGER, kind VARCHAR)"
+          ],
+          "access": [
+            "read"
+          ],
+          "authentication": [
+            "none"
+          ]
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "sections",
+          "kinds": [
+            "function"
+          ],
+          "signatures": [
+            "sections(blob ANY) -> TABLE(name VARCHAR, kind VARCHAR, vaddr UBIGINT, size UBIGINT, file_off UBIGINT, exec BOOLEAN, entropy DOUBLE)"
+          ],
+          "access": [
+            "read"
+          ],
+          "authentication": [
+            "none"
+          ]
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "strings",
+          "kinds": [
+            "function"
+          ],
+          "signatures": [
+            "strings(blob ANY, min_len UBIGINT) -> TABLE(offset UBIGINT, encoding VARCHAR, value VARCHAR)"
+          ],
+          "access": [
+            "read"
+          ],
+          "authentication": [
+            "none"
+          ]
+        },
+        {
+          "schema": [
+            "main"
+          ],
+          "name": "supported_targets",
+          "kinds": [
+            "table"
+          ],
+          "signatures": [
+            "VIEW(arch VARCHAR, modes VARCHAR, description VARCHAR)"
+          ],
+          "access": [
+            "read"
+          ],
+          "authentication": [
+            "none"
+          ]
+        }
+      ],
+      "issues": []
+    }
+  },
+  "interface_drift": {
+    "known": true,
+    "current_only": [],
+    "released_only": [],
+    "changed": []
+  },
+  "notebooks": {
+    "01_decoding_mode_changes_the_instruction_stream.ipynb": {
+      "verified": true,
+      "issues": []
+    },
+    "02_static_evidence_changes_with_the_string_filter.ipynb": {
+      "verified": true,
+      "issues": []
+    }
+  },
+  "examples": [
+    {
+      "status": "verified",
+      "issues": [],
+      "verified_catalogs": [
+        "released",
+        "current"
+      ],
+      "object": {
+        "schema": [
+          "main"
+        ],
+        "name": "supported_targets"
+      },
+      "notebook": "01_decoding_mode_changes_the_instruction_stream.ipynb",
+      "runtime_revision": "v0.4.0",
+      "runtime_catalog_sha256": "89e12dc5e3dc05f52bfd13d57a40cfa384f96cc09bc59b44e27044e7473d4875"
+    },
+    {
+      "status": "verified",
+      "issues": [],
+      "verified_catalogs": [
+        "released",
+        "current"
+      ],
+      "object": {
+        "schema": [
+          "main"
+        ],
+        "name": "format"
+      },
+      "notebook": "01_decoding_mode_changes_the_instruction_stream.ipynb",
+      "runtime_revision": "v0.4.0",
+      "runtime_catalog_sha256": "89e12dc5e3dc05f52bfd13d57a40cfa384f96cc09bc59b44e27044e7473d4875"
+    },
+    {
+      "status": "verified",
+      "issues": [],
+      "verified_catalogs": [
+        "released",
+        "current"
+      ],
+      "object": {
+        "schema": [
+          "main"
+        ],
+        "name": "disassemble"
+      },
+      "notebook": "01_decoding_mode_changes_the_instruction_stream.ipynb",
+      "runtime_revision": "v0.4.0",
+      "runtime_catalog_sha256": "89e12dc5e3dc05f52bfd13d57a40cfa384f96cc09bc59b44e27044e7473d4875"
+    },
+    {
+      "status": "verified",
+      "issues": [],
+      "verified_catalogs": [
+        "released",
+        "current"
+      ],
+      "object": {
+        "schema": [
+          "main"
+        ],
+        "name": "entrypoint"
+      },
+      "notebook": "02_static_evidence_changes_with_the_string_filter.ipynb",
+      "runtime_revision": "v0.4.0",
+      "runtime_catalog_sha256": "89e12dc5e3dc05f52bfd13d57a40cfa384f96cc09bc59b44e27044e7473d4875"
+    },
+    {
+      "status": "verified",
+      "issues": [],
+      "verified_catalogs": [
+        "released",
+        "current"
+      ],
+      "object": {
+        "schema": [
+          "main"
+        ],
+        "name": "sections"
+      },
+      "notebook": "02_static_evidence_changes_with_the_string_filter.ipynb",
+      "runtime_revision": "v0.4.0",
+      "runtime_catalog_sha256": "89e12dc5e3dc05f52bfd13d57a40cfa384f96cc09bc59b44e27044e7473d4875"
+    },
+    {
+      "status": "verified",
+      "issues": [],
+      "verified_catalogs": [
+        "released",
+        "current"
+      ],
+      "object": {
+        "schema": [
+          "main"
+        ],
+        "name": "imports"
+      },
+      "notebook": "02_static_evidence_changes_with_the_string_filter.ipynb",
+      "runtime_revision": "v0.4.0",
+      "runtime_catalog_sha256": "89e12dc5e3dc05f52bfd13d57a40cfa384f96cc09bc59b44e27044e7473d4875"
+    },
+    {
+      "status": "verified",
+      "issues": [],
+      "verified_catalogs": [
+        "released",
+        "current"
+      ],
+      "object": {
+        "schema": [
+          "main"
+        ],
+        "name": "strings"
+      },
+      "notebook": "02_static_evidence_changes_with_the_string_filter.ipynb",
+      "runtime_revision": "v0.4.0",
+      "runtime_catalog_sha256": "89e12dc5e3dc05f52bfd13d57a40cfa384f96cc09bc59b44e27044e7473d4875"
+    },
+    {
+      "status": "verified",
+      "issues": [],
+      "verified_catalogs": [
+        "released",
+        "current"
+      ],
+      "object": {
+        "schema": [
+          "main"
+        ],
+        "name": "capabilities"
+      },
+      "notebook": "02_static_evidence_changes_with_the_string_filter.ipynb",
+      "runtime_revision": "v0.4.0",
+      "runtime_catalog_sha256": "89e12dc5e3dc05f52bfd13d57a40cfa384f96cc09bc59b44e27044e7473d4875"
+    }
+  ],
+  "issues": []
+}

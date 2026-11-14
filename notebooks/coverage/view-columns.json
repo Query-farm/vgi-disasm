@@ -1,0 +1,37 @@
+{
+  "query": "DESCRIBE SELECT * FROM disasm.main.supported_targets",
+  "columns": [
+    "column_name",
+    "column_type",
+    "null",
+    "key",
+    "default",
+    "extra"
+  ],
+  "rows": [
+    [
+      "arch",
+      "VARCHAR",
+      "YES",
+      null,
+      null,
+      null
+    ],
+    [
+      "modes",
+      "VARCHAR",
+      "YES",
+      null,
+      null,
+      null
+    ],
+    [
+      "description",
+      "VARCHAR",
+      "YES",
+      null,
+      null,
+      null
+    ]
+  ]
+}

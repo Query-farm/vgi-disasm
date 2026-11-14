@@ -1,0 +1,53 @@
+{
+  "query": "DESCRIBE SELECT * FROM disasm.main.capabilities('assets/hello-macho-arm64.bin')",
+  "columns": [
+    "column_name",
+    "column_type",
+    "null",
+    "key",
+    "default",
+    "extra"
+  ],
+  "rows": [
+    [
+      "rule",
+      "VARCHAR",
+      "YES",
+      null,
+      null,
+      null
+    ],
+    [
+      "attack_id",
+      "VARCHAR",
+      "YES",
+      null,
+      null,
+      null
+    ],
+    [
+      "attack_name",
+      "VARCHAR",
+      "YES",
+      null,
+      null,
+      null
+    ],
+    [
+      "severity",
+      "VARCHAR",
+      "YES",
+      null,
+      null,
+      null
+    ],
+    [
+      "evidence",
+      "VARCHAR",
+      "YES",
+      null,
+      null,
+      null
+    ]
+  ]
+}

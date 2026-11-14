@@ -1,0 +1,37 @@
+{
+  "query": "DESCRIBE SELECT * FROM disasm.main.strings('assets/hello-macho-arm64.bin')",
+  "columns": [
+    "column_name",
+    "column_type",
+    "null",
+    "key",
+    "default",
+    "extra"
+  ],
+  "rows": [
+    [
+      "offset",
+      "UBIGINT",
+      "YES",
+      null,
+      null,
+      null
+    ],
+    [
+      "encoding",
+      "VARCHAR",
+      "YES",
+      null,
+      null,
+      null
+    ],
+    [
+      "value",
+      "VARCHAR",
+      "YES",
+      null,
+      null,
+      null
+    ]
+  ]
+}

@@ -1,0 +1,329 @@
+{
+  "schema_version": 1,
+  "catalogs": {
+    "released": {
+      "path": "coverage/catalog-released.json",
+      "sha256": "89e12dc5e3dc05f52bfd13d57a40cfa384f96cc09bc59b44e27044e7473d4875",
+      "review": {
+        "status": "approved",
+        "reviewer": "Codex /root/notebooks_earthquakes",
+        "reviewed_at": "2026-11-14T19:44:43.702802+00:00",
+        "catalog_sha256": "89e12dc5e3dc05f52bfd13d57a40cfa384f96cc09bc59b44e27044e7473d4875",
+        "notes": "Actual complete runtime inventory:7 function rows/names,0 physical tables,1 supported_targets view=8 logical surfaces. ANY input registration accepts bytes/path without creating extra names. Full table-function/view columns match release and current. All APIs read supplied bytes or a fixed vocabulary; no auth/write exclusions. Current source difference is composed examples/descriptive metadata only. Notebook runs use v0.4.0; current mappings are compatibility,not current notebook execution."
+      }
+    },
+    "current": {
+      "path": "coverage/catalog-current.json",
+      "sha256": "a0de89b955d80f00112c4a41a747b559c61b82ab1df09c98f50914392951208e",
+      "review": {
+        "status": "approved",
+        "reviewer": "Codex /root/notebooks_earthquakes",
+        "reviewed_at": "2026-11-14T19:44:43.702802+00:00",
+        "catalog_sha256": "a0de89b955d80f00112c4a41a747b559c61b82ab1df09c98f50914392951208e",
+        "notes": "Actual complete runtime inventory:7 function rows/names,0 physical tables,1 supported_targets view=8 logical surfaces. ANY input registration accepts bytes/path without creating extra names. Full table-function/view columns match release and current. All APIs read supplied bytes or a fixed vocabulary; no auth/write exclusions. Current source difference is composed examples/descriptive metadata only. Notebook runs use v0.4.0; current mappings are compatibility,not current notebook execution."
+      }
+    }
+  },
+  "notebooks": [
+    {
+      "path": "01_decoding_mode_changes_the_instruction_stream.ipynb",
+      "sha256": "71f63fa75524a46b9107c3e2de774a93b5a241372bc952d3cba1037d04bb52f5",
+      "execution": {
+        "path": "coverage/run-01.json",
+        "sha256": "2a3382f2595cdbe501526946d33f22fbc5ebbfbe7f739e5e03657b18ba5c2455"
+      }
+    },
+    {
+      "path": "02_static_evidence_changes_with_the_string_filter.ipynb",
+      "sha256": "05fbcc3bca5cc5d627c62f7b61f1fc1fb3f1a6c6837dacfa8bf3669379f77ca1",
+      "execution": {
+        "path": "coverage/run-02.json",
+        "sha256": "a0aa4c98dd5346c3e4f7ce7a0fdb130015fdd07f5f43d049b8204ea6a4532b79"
+      }
+    }
+  ],
+  "examples": [
+    {
+      "object": {
+        "schema": "main",
+        "name": "supported_targets"
+      },
+      "notebook": "01_decoding_mode_changes_the_instruction_stream.ipynb",
+      "sql": [
+        {
+          "cell": "targets-query",
+          "reference": "disasm.main.supported_targets"
+        }
+      ],
+      "narrative_cells": [
+        "targets-story"
+      ],
+      "result_cells": [
+        "targets-finding"
+      ],
+      "interpretation_cells": [
+        "targets-finding"
+      ],
+      "review": {
+        "status": "approved",
+        "reviewer": "Codex /root/notebooks_earthquakes",
+        "reviewed_at": "2026-11-14T19:44:43.702802+00:00",
+        "notebook_sha256": "71f63fa75524a46b9107c3e2de774a93b5a241372bc952d3cba1037d04bb52f5",
+        "catalog_sha256": [
+          "89e12dc5e3dc05f52bfd13d57a40cfa384f96cc09bc59b44e27044e7473d4875",
+          "a0de89b955d80f00112c4a41a747b559c61b82ab1df09c98f50914392951208e"
+        ],
+        "purpose": "Validate the selected decode token against the worker vocabulary without using it to infer sample architecture.",
+        "finding": "The x86 row advertises x16,x32,x64 and confirms the selected mode is supported. Raw bytes lack header evidence to select among them."
+      }
+    },
+    {
+      "object": {
+        "schema": "main",
+        "name": "format"
+      },
+      "notebook": "01_decoding_mode_changes_the_instruction_stream.ipynb",
+      "sql": [
+        {
+          "cell": "connection",
+          "reference": "disasm.main.format"
+        }
+      ],
+      "narrative_cells": [
+        "attach-story"
+      ],
+      "result_cells": [
+        "connection"
+      ],
+      "interpretation_cells": [
+        "targets-finding"
+      ],
+      "review": {
+        "status": "approved",
+        "reviewer": "Codex /root/notebooks_earthquakes",
+        "reviewed_at": "2026-11-14T19:44:43.702802+00:00",
+        "notebook_sha256": "71f63fa75524a46b9107c3e2de774a93b5a241372bc952d3cba1037d04bb52f5",
+        "catalog_sha256": [
+          "89e12dc5e3dc05f52bfd13d57a40cfa384f96cc09bc59b44e27044e7473d4875",
+          "a0de89b955d80f00112c4a41a747b559c61b82ab1df09c98f50914392951208e"
+        ],
+        "purpose": "Establish absence of header-provided architecture before comparing explicit decode modes.",
+        "finding": "The authored16-byte input is raw; no header resolves architecture/mode,so the size-zero missing-architecture diagnostic remains visible."
+      }
+    },
+    {
+      "object": {
+        "schema": "main",
+        "name": "disassemble"
+      },
+      "notebook": "01_decoding_mode_changes_the_instruction_stream.ipynb",
+      "sql": [
+        {
+          "cell": "decode-query",
+          "reference": "disasm.main.disassemble"
+        }
+      ],
+      "narrative_cells": [
+        "decode-story",
+        "fraction-story"
+      ],
+      "result_cells": [
+        "selected-finding",
+        "profile-chart"
+      ],
+      "interpretation_cells": [
+        "selected-finding",
+        "profile-chart"
+      ],
+      "review": {
+        "status": "approved",
+        "reviewer": "Codex /root/notebooks_earthquakes",
+        "reviewed_at": "2026-11-14T19:44:43.702802+00:00",
+        "notebook_sha256": "71f63fa75524a46b9107c3e2de774a93b5a241372bc952d3cba1037d04bb52f5",
+        "catalog_sha256": [
+          "89e12dc5e3dc05f52bfd13d57a40cfa384f96cc09bc59b44e27044e7473d4875",
+          "a0de89b955d80f00112c4a41a747b559c61b82ab1df09c98f50914392951208e"
+        ],
+        "purpose": "Compare actual instruction boundaries and fallback accounting over fixed bytes.",
+        "finding": "x64 produces7decoded instructions plus1fallback and15/16decoded bytes; x32 gives10instructions,zero fallback and16/16bytes. Both reconstruct the same original bytes; higher decoded fraction does not establish intended mode."
+      }
+    },
+    {
+      "object": {
+        "schema": "main",
+        "name": "entrypoint"
+      },
+      "notebook": "02_static_evidence_changes_with_the_string_filter.ipynb",
+      "sql": [
+        {
+          "cell": "connection",
+          "reference": "disasm.main.entrypoint"
+        }
+      ],
+      "narrative_cells": [
+        "container-story"
+      ],
+      "result_cells": [
+        "entry-finding"
+      ],
+      "interpretation_cells": [
+        "entry-finding"
+      ],
+      "review": {
+        "status": "approved",
+        "reviewer": "Codex /root/notebooks_earthquakes",
+        "reviewed_at": "2026-11-14T19:44:43.702802+00:00",
+        "notebook_sha256": "05fbcc3bca5cc5d627c62f7b61f1fc1fb3f1a6c6837dacfa8bf3669379f77ca1",
+        "catalog_sha256": [
+          "89e12dc5e3dc05f52bfd13d57a40cfa384f96cc09bc59b44e27044e7473d4875",
+          "a0de89b955d80f00112c4a41a747b559c61b82ab1df09c98f50914392951208e"
+        ],
+        "purpose": "Map a header-derived virtual entry address to file coordinates using its containing section.",
+        "finding": "ARM64 little-endian entry4294968760 maps to file offset1464 inside executable __TEXT,__text,agreeing with the independent entrypoint projection. Static location is not execution evidence."
+      }
+    },
+    {
+      "object": {
+        "schema": "main",
+        "name": "sections"
+      },
+      "notebook": "02_static_evidence_changes_with_the_string_filter.ipynb",
+      "sql": [
+        {
+          "cell": "container-query",
+          "reference": "disasm.main.sections"
+        }
+      ],
+      "narrative_cells": [
+        "container-story"
+      ],
+      "result_cells": [
+        "entry-finding",
+        "sections-chart"
+      ],
+      "interpretation_cells": [
+        "entry-finding",
+        "sections-chart"
+      ],
+      "review": {
+        "status": "approved",
+        "reviewer": "Codex /root/notebooks_earthquakes",
+        "reviewed_at": "2026-11-14T19:44:43.702802+00:00",
+        "notebook_sha256": "05fbcc3bca5cc5d627c62f7b61f1fc1fb3f1a6c6837dacfa8bf3669379f77ca1",
+        "catalog_sha256": [
+          "89e12dc5e3dc05f52bfd13d57a40cfa384f96cc09bc59b44e27044e7473d4875",
+          "a0de89b955d80f00112c4a41a747b559c61b82ab1df09c98f50914392951208e"
+        ],
+        "purpose": "Relate entry coordinates and projected section byte scopes to the whole container.",
+        "finding": "Eight sections total219bytes inside a49,952-byte fixture; the chart explicitly separates these scopes and the entry mapping reconciles. Unrepresented container bytes are not inferred to be hidden code."
+      }
+    },
+    {
+      "object": {
+        "schema": "main",
+        "name": "imports"
+      },
+      "notebook": "02_static_evidence_changes_with_the_string_filter.ipynb",
+      "sql": [
+        {
+          "cell": "container-query",
+          "reference": "disasm.main.imports"
+        }
+      ],
+      "narrative_cells": [
+        "container-story"
+      ],
+      "result_cells": [
+        "imports-finding"
+      ],
+      "interpretation_cells": [
+        "imports-finding"
+      ],
+      "review": {
+        "status": "approved",
+        "reviewer": "Codex /root/notebooks_earthquakes",
+        "reviewed_at": "2026-11-14T19:44:43.702802+00:00",
+        "notebook_sha256": "05fbcc3bca5cc5d627c62f7b61f1fc1fb3f1a6c6837dacfa8bf3669379f77ca1",
+        "catalog_sha256": [
+          "89e12dc5e3dc05f52bfd13d57a40cfa384f96cc09bc59b44e27044e7473d4875",
+          "a0de89b955d80f00112c4a41a747b559c61b82ab1df09c98f50914392951208e"
+        ],
+        "purpose": "Inspect linked symbol dependencies separately from observed calls or inferred behavior.",
+        "finding": "The fixture reports _puts and dyld_stub_binder from libSystem;2imports do not establish either function ran."
+      }
+    },
+    {
+      "object": {
+        "schema": "main",
+        "name": "strings"
+      },
+      "notebook": "02_static_evidence_changes_with_the_string_filter.ipynb",
+      "sql": [
+        {
+          "cell": "strings-query",
+          "reference": "disasm.main.strings"
+        }
+      ],
+      "narrative_cells": [
+        "strings-story",
+        "control-story"
+      ],
+      "result_cells": [
+        "strings-query",
+        "sensitivity-chart",
+        "evidence-display"
+      ],
+      "interpretation_cells": [
+        "evidence-finding",
+        "sensitivity-chart"
+      ],
+      "review": {
+        "status": "approved",
+        "reviewer": "Codex /root/notebooks_earthquakes",
+        "reviewed_at": "2026-11-14T19:44:43.702802+00:00",
+        "notebook_sha256": "05fbcc3bca5cc5d627c62f7b61f1fc1fb3f1a6c6837dacfa8bf3669379f77ca1",
+        "catalog_sha256": [
+          "89e12dc5e3dc05f52bfd13d57a40cfa384f96cc09bc59b44e27044e7473d4875",
+          "a0de89b955d80f00112c4a41a747b559c61b82ab1df09c98f50914392951208e"
+        ],
+        "purpose": "Measure how a selected minimum printable length changes visible extracted evidence while retaining the complete bounded base.",
+        "finding": "At minimum4 the Mach-O has36selected strings and the authored control4; the local threshold curve reconciles actual selected-worker results. The experiment raises minimum to12 without changing input bytes or capability scans."
+      }
+    },
+    {
+      "object": {
+        "schema": "main",
+        "name": "capabilities"
+      },
+      "notebook": "02_static_evidence_changes_with_the_string_filter.ipynb",
+      "sql": [
+        {
+          "cell": "control-query",
+          "reference": "disasm.main.capabilities"
+        }
+      ],
+      "narrative_cells": [
+        "control-story"
+      ],
+      "result_cells": [
+        "evidence-display",
+        "populations-query"
+      ],
+      "interpretation_cells": [
+        "evidence-finding"
+      ],
+      "review": {
+        "status": "approved",
+        "reviewer": "Codex /root/notebooks_earthquakes",
+        "reviewed_at": "2026-11-14T19:44:43.702802+00:00",
+        "notebook_sha256": "05fbcc3bca5cc5d627c62f7b61f1fc1fb3f1a6c6837dacfa8bf3669379f77ca1",
+        "catalog_sha256": [
+          "89e12dc5e3dc05f52bfd13d57a40cfa384f96cc09bc59b44e27044e7473d4875",
+          "a0de89b955d80f00112c4a41a747b559c61b82ab1df09c98f50914392951208e"
+        ],
+        "purpose": "Link actual advisory heuristic rows back to supporting strings and byte offsets while preserving findings hidden by a display filter.",
+        "finding": "The authored documentation control yields4rules over3distinct supporting strings,including2rules on one PowerShell text. Mach-O yields0rules. Neither presence nor absence proves behavior or safety; every original rule survives the left join when a stricter display threshold hides its string."
+      }
+    }
+  ]
+}
