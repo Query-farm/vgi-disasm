@@ -79,7 +79,7 @@ cargo fmt --all -- --check
 cargo test --workspace
 RUSTDOCFLAGS="-D warnings" cargo doc --no-deps --workspace
 uvx --prerelease allow --from 'vgi-lint-check>=2.0.1' vgi-lint lint "$PWD/target/release/disasm-worker" --fail-on info
-HAYBARN_UNITTEST=$(command -v haybarn-unittest) WORKER_BIN="$PWD/target/release/disasm-worker" TRANSPORT=subprocess ci/run-integration.sh   # also http, unix
+make test-sql   # ci/run-integration.sh over stdio, launch and http
 ```
 
 ## Scope (v1)

@@ -194,7 +194,7 @@ The input *is* the malware, so every transform is wrapped and bounded:
 cargo build --release            # produces target/release/disasm-worker
 cargo test                       # unit + golden vectors + proptest no-panic gate
 cargo clippy --all-targets -- -D warnings
-./run_tests.sh                   # haybarn SQLLogic E2E (needs haybarn-unittest + the vgi ext)
+make test-sql                    # haybarn SQLLogic E2E (needs haybarn-unittest + the vgi ext)
 ```
 
 The crate is split into `disasm-core` (pure decode/parse/triage engine; no Arrow,
